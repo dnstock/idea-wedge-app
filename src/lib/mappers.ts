@@ -1,0 +1,88 @@
+import type { ReviewComment, ReviewRecord } from '../types';
+
+export function mapDbReview(row: Record<string, unknown>): ReviewRecord {
+  return {
+    id: String(row.id),
+    createdAt: String(row.created_at ?? ''),
+    updatedAt: String(row.updated_at ?? ''),
+    userId: row.user_id ? String(row.user_id) : null,
+    authorName: String(row.author_name ?? ''),
+    ideaName: String(row.idea_name ?? ''),
+    summary: String(row.summary ?? ''),
+    ownerName: String(row.owner_name ?? ''),
+    status: String(row.status ?? 'researching') as ReviewRecord['status'],
+    tags: String(row.tags ?? ''),
+    category: String(row.category ?? ''),
+    competitors: String(row.competitors ?? ''),
+    proof: String(row.proof ?? ''),
+    marketScore: String(row.market_score ?? 'unknown') as ReviewRecord['marketScore'],
+    problem: String(row.problem ?? ''),
+    improvement: String(row.improvement ?? ''),
+    evidence: String(row.evidence ?? ''),
+    wedgeScore: String(row.wedge_score ?? 'unknown') as ReviewRecord['wedgeScore'],
+    core: String(row.core ?? ''),
+    outOfScope: String(row.out_of_scope ?? ''),
+    complexity: String(row.complexity ?? ''),
+    mvpScore: String(row.mvp_score ?? 'unknown') as ReviewRecord['mvpScore'],
+    buyer: String(row.buyer ?? ''),
+    channel: String(row.channel ?? ''),
+    message: String(row.message ?? ''),
+    proofPoint: String(row.proof_point ?? ''),
+    distributionScore: String(row.distribution_score ?? 'unknown') as ReviewRecord['distributionScore'],
+    dependencies: String(row.dependencies ?? ''),
+    killShot: String(row.kill_shot ?? ''),
+    mitigation: String(row.mitigation ?? ''),
+    riskScore: String(row.risk_score ?? 'unknown') as ReviewRecord['riskScore'],
+    decision: row.decision ? (String(row.decision) as ReviewRecord['decision']) : null,
+    overallScore: Number(row.overall_score ?? 0),
+  };
+}
+
+export function mapReviewForDb(review: ReviewRecord): Record<string, unknown> {
+  return {
+    id: review.id,
+    created_at: review.createdAt,
+    updated_at: review.updatedAt,
+    user_id: review.userId,
+    author_name: review.authorName,
+    idea_name: review.ideaName,
+    summary: review.summary,
+    owner_name: review.ownerName,
+    status: review.status,
+    tags: review.tags,
+    category: review.category,
+    competitors: review.competitors,
+    proof: review.proof,
+    market_score: review.marketScore,
+    problem: review.problem,
+    improvement: review.improvement,
+    evidence: review.evidence,
+    wedge_score: review.wedgeScore,
+    core: review.core,
+    out_of_scope: review.outOfScope,
+    complexity: review.complexity,
+    mvp_score: review.mvpScore,
+    buyer: review.buyer,
+    channel: review.channel,
+    message: review.message,
+    proof_point: review.proofPoint,
+    distribution_score: review.distributionScore,
+    dependencies: review.dependencies,
+    kill_shot: review.killShot,
+    mitigation: review.mitigation,
+    risk_score: review.riskScore,
+    decision: review.decision,
+    overall_score: review.overallScore,
+  };
+}
+
+export function mapDbComment(row: Record<string, unknown>): ReviewComment {
+  return {
+    id: String(row.id),
+    createdAt: String(row.created_at ?? ''),
+    reviewId: String(row.review_id ?? ''),
+    userId: row.user_id ? String(row.user_id) : null,
+    authorName: String(row.author_name ?? ''),
+    body: String(row.body ?? ''),
+  };
+}
