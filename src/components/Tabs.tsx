@@ -6,7 +6,7 @@ interface TabsProps {
   onReset: () => void;
 }
 
-const tabs: TabKey[] = ['workspace', 'reviews', 'compare', 'setup'];
+const tabs: TabKey[] = ['workspace', 'reviews', 'compare'];
 
 export function Tabs({ activeTab, onChange, onReset }: TabsProps) {
   return (
