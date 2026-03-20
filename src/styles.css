@@ -438,6 +438,11 @@ code {
   padding: 0 0 0 20px;
 }
 
+.tabs-grid .new-idea::before {
+  content: '✚';
+  margin-right: 8px;
+}
+
 .rule-block summary::after,
 .accordion-item summary::after {
   content: '◀';

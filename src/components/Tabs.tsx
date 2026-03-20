@@ -6,7 +6,10 @@ interface TabsProps {
   onReset: () => void;
 }
 
-const tabs: TabKey[] = ['workspace', 'reviews', 'compare'];
+const allTabs: TabKey[] = ['workspace', 'reviews', 'compare'];
+const devTabs: TabKey[] = ['setup'];
+
+const tabs: TabKey[] = allTabs.concat(import.meta.env.DEV ? devTabs : []);
 
 export function Tabs({ activeTab, onChange, onReset }: TabsProps) {
   return (
@@ -23,7 +26,7 @@ export function Tabs({ activeTab, onChange, onReset }: TabsProps) {
           </button>
         ))}
       </div>
-      <button className="button iridescent-button" onClick={onReset} type="button">
+      <button className="button iridescent-button new-idea" onClick={onReset} type="button">
         New Idea
       </button>
     </div>
