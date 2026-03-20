@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AppShell } from './components/AppShell';
 import { AuthPanel } from './components/AuthPanel';
 import { CommentsPanel } from './components/CommentsPanel';
@@ -20,9 +20,107 @@ export default function App() {
   const { reviews, commentsByReview, loading, saving, error, setError, saveReview, deleteReview, addComment } = useReviews(auth.profile);
   const [activeTab, setActiveTab] = useState<TabKey>('workspace');
   const [currentReview, setCurrentReview] = useState<ReviewRecord>(() => createEmptyReview(''));
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ReviewStatus>('all');
   const [compareIds, setCompareIds] = useState<string[]>([]);
+  const pendingReviewIdRef = useRef<string | null>(null);
+  const [hasSyncedInitialHash, setHasSyncedInitialHash] = useState(false);
+
+  const TAB_KEYS: TabKey[] = ['workspace', 'reviews', 'compare', 'setup'];
+
+  function buildHash(tab: TabKey, reviewId?: string, comparedIds: string[] = []) {
+    if (tab === 'workspace') {
+      return `#${tab}/${reviewId ?? 'new'}`;
+    }
+
+    if (tab === 'compare') {
+      const serializedIds = comparedIds.filter(Boolean).slice(0, 2).join(',');
+      return serializedIds ? `#${tab}/${serializedIds}` : `#${tab}`;
+    }
+
+    return `#${tab}`;
+  }
+
+  function parseHash(hash = window.location.hash) {
+    const cleaned = hash.replace(/^#\/?/, '');
+    const [tab, value] = cleaned.split('/');
+
+    return {
+      tab: (tab || 'workspace') as TabKey,
+      reviewId: tab === 'workspace' ? value : undefined,
+      compareIds: tab === 'compare' && value ? value.split(',').filter(Boolean).slice(0, 2) : [],
+    };
+  }
+
+  useEffect(() => {
+    function syncFromHash() {
+      const { tab, reviewId, compareIds: hashCompareIds } = parseHash();
+      const nextTab = TAB_KEYS.includes(tab) ? tab : 'workspace';
+      setActiveTab(nextTab);
+
+      if (nextTab === 'compare') {
+        setCompareIds(hashCompareIds);
+      }
+
+      if (nextTab === 'workspace') {
+        if (reviewId && reviewId !== 'new') {
+          const existing = reviews.find((review) => review.id === reviewId);
+          if (existing) {
+            setCurrentReview(existing);
+            pendingReviewIdRef.current = null;
+          } else {
+            pendingReviewIdRef.current = reviewId;
+          }
+        } else {
+          setCurrentReview(createEmptyReview(auth.profile?.displayName || ''));
+          pendingReviewIdRef.current = null;
+        }
+      }
+
+      setHasSyncedInitialHash(true);
+    }
+
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
+  }, [reviews, auth.profile]);
+
+  useEffect(() => {
+    if (!pendingReviewIdRef.current) return;
+    const found = reviews.find((review) => review.id === pendingReviewIdRef.current);
+    if (found) {
+      setCurrentReview(found);
+      pendingReviewIdRef.current = null;
+    }
+  }, [reviews]);
+
+  useEffect(() => {
+    if (!hasSyncedInitialHash) return;
+
+    const reviewIdForHash = reviews.some((review) => review.id === currentReview.id) ? currentReview.id : 'new';
+    const desiredHash = buildHash(activeTab, reviewIdForHash, compareIds);
+    if (window.location.hash !== desiredHash) {
+      window.history.replaceState(null, '', desiredHash);
+    }
+  }, [activeTab, compareIds, currentReview.id, hasSyncedInitialHash, reviews]);
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setSidebarOpen(false);
+        ticking = false;
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [sidebarOpen]);
 
   const verdict = useMemo(() => getVerdict(currentReview), [currentReview]);
   const currentComments = commentsByReview[currentReview.id] ?? [];
@@ -67,14 +165,18 @@ export default function App() {
   }
 
   function handleNewReview() {
+    pendingReviewIdRef.current = null;
     setCurrentReview(createEmptyReview(auth.profile?.displayName || ''));
     setActiveTab('workspace');
+    setSidebarOpen(true);
     setError('');
   }
 
   function handleOpen(review: ReviewRecord) {
+    pendingReviewIdRef.current = null;
     setCurrentReview(review);
     setActiveTab('workspace');
+    setSidebarOpen(true);
   }
 
   async function handleDelete(id: string) {
@@ -118,16 +220,16 @@ export default function App() {
       }
     >
       <StatsGrid total={stats.total} approved={stats.approved} deferred={stats.deferred} rejected={stats.rejected} />
-      <Tabs activeTab={activeTab} onChange={setActiveTab} />
+      <Tabs activeTab={activeTab} onChange={setActiveTab} onReset={handleNewReview} />
 
       {error ? <div className="error-banner">{error}</div> : null}
 
       {activeTab === 'workspace' ? (
         <div className="workspace-grid">
-          <ReviewForm review={currentReview} onChange={syncReview} onSave={handleSave} onReset={handleNewReview} saving={saving} />
+          <ReviewForm review={currentReview} onChange={syncReview} onSave={handleSave} saving={saving} isNewIdea={!isCurrentReviewSaved} />
           <div className="workspace-sidebar">
-            <DecisionCard review={currentReview} verdict={verdict} />
-            <CommentsPanel canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} />
+              <DecisionCard review={currentReview} verdict={verdict} />
+              <CommentsPanel canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} />
           </div>
         </div>
       ) : null}

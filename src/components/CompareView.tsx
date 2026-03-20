@@ -41,8 +41,9 @@ export function CompareView({ reviews }: CompareViewProps) {
       <div className="compare-grid">
         {reviews.map((review) => (
           <article className="compare-card" key={review.id}>
+            <p className="compare-category">{review.category}</p>
             <div className="compare-header">
-              <h3>{review.ideaName}</h3>
+              <h3><span className="iridescent-text">{review.ideaName}</span></h3>
               <span className="badge">{review.decision ?? 'Pending'}</span>
             </div>
             <p className="compare-summary">{review.summary}</p>

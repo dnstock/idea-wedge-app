@@ -1,3 +1,4 @@
+import { useStickyState } from '../hooks/useStickyState';
 import { SCORE_OPTIONS, SECTION_DEFINITIONS, STATUS_OPTIONS } from '../config';
 import type { ReviewRecord } from '../types';
 
@@ -5,28 +6,46 @@ interface ReviewFormProps {
   review: ReviewRecord;
   onChange: (next: ReviewRecord) => void;
   onSave: () => void;
-  onReset: () => void;
   saving: boolean;
+  isNewIdea: boolean;
 }
 
 function updateField(review: ReviewRecord, key: keyof ReviewRecord, value: string): ReviewRecord {
   return { ...review, [key]: value };
 }
 
-export function ReviewForm({ review, onChange, onSave, onReset, saving }: ReviewFormProps) {
+export function ReviewForm({ review, onChange, onSave, saving, isNewIdea }: ReviewFormProps) {
+  const { sentinelRef, stickyRef } = useStickyState();
+
+  const headerContent = isNewIdea
+  ? {
+      title: 'New Idea',
+      subtitle: 'Capture the idea, score the gates, and save the review for team visibility.',
+      buttonLabel: 'Submit idea',
+      buttonLabelSaving: 'Submitting…',
+    }
+  : {
+      title: review.ideaName || 'Untitled idea',
+      subtitle: 'Revise the idea details, adjust the scores, and save your changes.',
+      buttonLabel: 'Update idea',
+      buttonLabelSaving: 'Updating…',
+    };
+
+  const submittedDisplay = isNewIdea ? null : <span className="badge subtle unsticky" title={review.createdAt.toString()}>Submitted: {new Date(review.createdAt).toLocaleDateString()}</span>;
+  const updatedDisplay = isNewIdea || review.updatedAt === review.createdAt ? null : <span className="badge subtle unsticky" title={review.updatedAt.toString()}>Updated: {new Date(review.updatedAt).toLocaleDateString()}</span>;
+
   return (
     <section className="card form-card">
-      <div className="section-header">
+      <div ref={sentinelRef} className="sticky-sentinel" />
+      <div ref={stickyRef} className="section-header sticky-header">
         <div>
-          <h2>Review workspace</h2>
-          <p>Capture the idea, score the gates, and save the review for team visibility.</p>
+          <h2><span className="iridescent-text">{headerContent.title}</span></h2>
+          {submittedDisplay} {updatedDisplay}
+          <p className="unsticky">{headerContent.subtitle}</p>
         </div>
         <div className="inline-actions">
-          <button className="button secondary" onClick={onReset} type="button">
-            New review
-          </button>
-          <button className="button primary" onClick={onSave} type="button" disabled={saving}>
-            {saving ? 'Saving…' : 'Save review'}
+          <button className="button primary nobreak" onClick={onSave} type="button" disabled={saving}>
+            {saving ? headerContent.buttonLabelSaving : headerContent.buttonLabel}
           </button>
         </div>
       </div>

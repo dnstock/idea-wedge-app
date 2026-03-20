@@ -58,16 +58,31 @@ export function SavedReviewsView({
             <article className="review-card" key={review.id}>
               <div className="review-card-top">
                 <div>
-                  <h3>{review.ideaName || 'Untitled idea'}</h3>
+                  <span className="review-category">{review.category}</span>
+                  <h3><span className="iridescent-text">{review.ideaName || 'Untitled idea'}</span></h3>
                   <p>{review.summary || 'No summary yet.'}</p>
+                  <div className="tag-row">
+                    <span className="label">Tags:</span>
+                    {review.tags
+                      ? review.tags.split(',').map((tag) => (
+                          <span key={tag} className="tag">
+                            {tag.trim()}
+                          </span>
+                        ))
+                      : null}
+                  </div>
                 </div>
-                <span className="badge subtle">{review.status}</span>
+                <span className="review-status">{review.status}</span>
               </div>
 
               <div className="badge-row">
                 <span className="badge">{review.decision ?? 'Pending'}</span>
                 <span className="badge subtle">{review.overallScore}/100</span>
                 {review.ownerName ? <span className="badge subtle">Owner: {review.ownerName}</span> : null}
+                <span title={review.createdAt.toString()} className="badge subtle">Submitted: {new Date(review.createdAt).toLocaleDateString()}</span>
+                {review.updatedAt !== review.createdAt ? (
+                  <span title={review.updatedAt.toString()} className="badge subtle">Updated: {new Date(review.updatedAt).toLocaleDateString()}</span>
+                ) : null}
               </div>
 
               <div className="score-mini-grid">
