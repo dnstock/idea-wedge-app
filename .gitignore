@@ -3,3 +3,13 @@ dist
 .env.local
 .env
 .DS_Store
+sql_users.sql
+
+.temp/
+
+skills-lock.json
+.agents/
+.agent/
+.claude/
+.continue/
+skills/

@@ -18,6 +18,9 @@
   --shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --sunset-text: linear-gradient(to right, #fb7185, #fb923c, #c084fc);
+  --bg-gradient: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+  --bg-gradient-alt1: linear-gradient(180deg, #f5f3ff 0%, var(--bg) 100%);
+  --bg-gradient-alt2: linear-gradient(180deg, #fff7ed 0%, var(--bg) 100%);
 }
 
 * {
@@ -26,7 +29,7 @@
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+  background: var(--bg-gradient);
   color: var(--text);
 }
 
@@ -172,16 +175,19 @@ code {
   color: #1d4ed8;
 }
 
+.eyebrow.subtle,
 .badge.subtle {
   background: #e2e8f0;
   color: #334155;
 }
 
+.eyebrow.warning,
 .badge.warning {
   background: var(--warning-bg);
   color: #92400e;
 }
 
+.eyebrow.success,
 .badge.success {
   background: var(--success-bg);
   color: #065f46;
@@ -265,9 +271,30 @@ code {
   background: #dbeafe;
 } */
 
-.error-banner {
+.success-banner {
+  line-height: 1.4;
   margin-bottom: 16px;
-  padding: 14px 16px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--success-border);
+  background: var(--success-bg);
+  color: #065f46;
+}
+
+.info-banner {
+  line-height: 1.4;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.error-banner {
+  line-height: 1.4;
+  margin-bottom: 16px;
+  padding: 12px 16px;
   border-radius: 18px;
   border: 1px solid var(--danger-border);
   background: var(--danger-bg);
@@ -339,7 +366,7 @@ code {
 
 .button:disabled {
   opacity: 0.6;
-  cursor: default;
+  cursor: not-allowed;
 }
 
 .vertical-divider {
@@ -503,6 +530,45 @@ code {
   gap: 12px;
   margin-top: -80px;
   padding-top: 70px;
+}
+
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  background: white;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+
+.login-card .logo {
+  display: block;
+  margin: 0 auto 24px;
+  text-align: center;
+}
+
+.login-card h1 {
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+.login-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.login-card .button {
+  width: 100%;
 }
 
 .verdict-panel {

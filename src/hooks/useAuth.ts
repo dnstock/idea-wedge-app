@@ -65,10 +65,13 @@ export function useAuth() {
     if (error) throw error;
   }
 
+  const isAuthenticated = !loading && !!profile;
+
   return {
     session,
     profile,
     loading,
+    isAuthenticated,
     isConfigured: isSupabaseConfigured,
     signInWithGoogle,
     signOut,

@@ -43,7 +43,7 @@ export function AuthPanel({ isConfigured, loading, profile, onSignIn, onSignOut 
     <div className="auth-card">
       <div className="badge success">Connected</div>
       <p>
-        Signed in as <strong>{profile.displayName}</strong>
+        <strong>{profile.displayName}</strong>
         {profile.email ? <> · {profile.email}</> : null}
       </p>
       <button className="button secondary" onClick={() => void onSignOut()}>

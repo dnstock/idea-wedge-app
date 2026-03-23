@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AppShell } from './components/AppShell';
+import { LoginScreen } from './components/LoginScreen';
 import { AuthPanel } from './components/AuthPanel';
 import { CommentsPanel } from './components/CommentsPanel';
 import { CompareView } from './components/CompareView';
@@ -20,12 +21,12 @@ export default function App() {
   const { reviews, commentsByReview, loading, saving, error, setError, saveReview, deleteReview, addComment } = useReviews(auth.profile);
   const [activeTab, setActiveTab] = useState<TabKey>('workspace');
   const [currentReview, setCurrentReview] = useState<ReviewRecord>(() => createEmptyReview(''));
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ReviewStatus>('all');
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const pendingReviewIdRef = useRef<string | null>(null);
   const [hasSyncedInitialHash, setHasSyncedInitialHash] = useState(false);
+  const isAuthenticated = auth.isAuthenticated;
 
   const TAB_KEYS: TabKey[] = ['workspace', 'reviews', 'compare', 'setup'];
 
@@ -55,6 +56,11 @@ export default function App() {
 
   useEffect(() => {
     function syncFromHash() {
+      if(!auth.profile) {
+        setHasSyncedInitialHash(true);
+        return;
+      }
+
       const { tab, reviewId, compareIds: hashCompareIds } = parseHash();
       const nextTab = TAB_KEYS.includes(tab) ? tab : 'workspace';
       setActiveTab(nextTab);
@@ -87,16 +93,16 @@ export default function App() {
   }, [reviews, auth.profile]);
 
   useEffect(() => {
-    if (!pendingReviewIdRef.current) return;
+    if (!auth.profile || !pendingReviewIdRef.current) return;
     const found = reviews.find((review) => review.id === pendingReviewIdRef.current);
     if (found) {
       setCurrentReview(found);
       pendingReviewIdRef.current = null;
     }
-  }, [reviews]);
+  }, [auth.profile, reviews]);
 
   useEffect(() => {
-    if (!hasSyncedInitialHash) return;
+    if (!auth.profile || !hasSyncedInitialHash) return;
 
     const reviewIdForHash = reviews.some((review) => review.id === currentReview.id) ? currentReview.id : 'new';
     const desiredHash = buildHash(activeTab, reviewIdForHash, compareIds);
@@ -104,23 +110,6 @@ export default function App() {
       window.history.replaceState(null, '', desiredHash);
     }
   }, [activeTab, compareIds, currentReview.id, hasSyncedInitialHash, reviews]);
-
-  useEffect(() => {
-    if (!sidebarOpen) return;
-
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        setSidebarOpen(false);
-        ticking = false;
-      });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [sidebarOpen]);
 
   const verdict = useMemo(() => getVerdict(currentReview), [currentReview]);
   const currentComments = commentsByReview[currentReview.id] ?? [];
@@ -168,7 +157,6 @@ export default function App() {
     pendingReviewIdRef.current = null;
     setCurrentReview(createEmptyReview(auth.profile?.displayName || ''));
     setActiveTab('workspace');
-    setSidebarOpen(true);
     setError('');
   }
 
@@ -176,7 +164,6 @@ export default function App() {
     pendingReviewIdRef.current = null;
     setCurrentReview(review);
     setActiveTab('workspace');
-    setSidebarOpen(true);
   }
 
   async function handleDelete(id: string) {
@@ -205,6 +192,14 @@ export default function App() {
     } catch {
       // handled in hook state
     }
+  }
+
+  if (!auth.isConfigured) {
+    return <LoginScreen isConfigured={false} loading={false} onSignIn={() => Promise.resolve()} />;
+  }
+
+  if (auth.loading || !isAuthenticated) {
+    return <LoginScreen isConfigured={auth.isConfigured} loading={auth.loading} onSignIn={auth.signInWithGoogle} />;
   }
 
   return (
