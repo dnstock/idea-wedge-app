@@ -1,8 +1,9 @@
 import { useStickyState } from '../hooks/useStickyState';
 import { SCORE_OPTIONS, SECTION_DEFINITIONS, STATUS_OPTIONS } from '../config';
-import type { ReviewRecord } from '../types';
+import type { ReviewRecord, UserProfile } from '../types';
 
 interface ReviewFormProps {
+  profile: UserProfile;
   review: ReviewRecord;
   onChange: (next: ReviewRecord) => void;
   onSave: () => void;
@@ -14,7 +15,7 @@ function updateField(review: ReviewRecord, key: keyof ReviewRecord, value: strin
   return { ...review, [key]: value };
 }
 
-export function ReviewForm({ review, onChange, onSave, saving, isNewIdea }: ReviewFormProps) {
+export function ReviewForm({ profile, review, onChange, onSave, saving, isNewIdea }: ReviewFormProps) {
   const { sentinelRef, stickyRef } = useStickyState();
 
   const headerContent = isNewIdea
@@ -33,6 +34,10 @@ export function ReviewForm({ review, onChange, onSave, saving, isNewIdea }: Revi
 
   const submittedDisplay = isNewIdea ? null : <span className="badge subtle unsticky" title={review.createdAt.toString()}>Submitted: {new Date(review.createdAt).toLocaleDateString()}</span>;
   const updatedDisplay = isNewIdea || review.updatedAt === review.createdAt ? null : <span className="badge subtle unsticky" title={review.updatedAt.toString()}>Updated: {new Date(review.updatedAt).toLocaleDateString()}</span>;
+
+  if (isNewIdea && !review.ownerName) {
+    review = { ...review, ownerName: profile.displayName };
+  }
 
   return (
     <section className="card form-card">

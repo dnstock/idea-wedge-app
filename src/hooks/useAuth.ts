@@ -9,6 +9,13 @@ function deriveDisplayName(session: Session | null): string {
   return String(metadata?.full_name || metadata?.name || session.user.email || 'Authenticated user');
 }
 
+function getAvatarUrl(session: Session | null): string | null {
+  if (!session?.user) return null;
+  console.log('Session user metadata:', session.user.user_metadata);
+  const metadata = session.user.user_metadata as Record<string, unknown> | undefined;
+  return String(metadata?.avatar_url || null);
+}
+
 function mapProfile(session: Session | null): UserProfile | null {
   if (!session?.user) return null;
 
@@ -16,6 +23,7 @@ function mapProfile(session: Session | null): UserProfile | null {
     id: session.user.id,
     email: session.user.email ?? null,
     displayName: deriveDisplayName(session),
+    avatarUrl: getAvatarUrl(session),
   };
 }
 

@@ -1,54 +1,36 @@
 import type { UserProfile } from '../types';
 
 interface AuthPanelProps {
-  isConfigured: boolean;
-  loading: boolean;
-  profile: UserProfile | null;
-  onSignIn: () => Promise<void>;
+  profile: UserProfile;
   onSignOut: () => Promise<void>;
 }
 
-export function AuthPanel({ isConfigured, loading, profile, onSignIn, onSignOut }: AuthPanelProps) {
-  if (!isConfigured) {
-    return (
-      <div className="auth-card">
-        <div className="badge subtle">Local demo mode</div>
-        <p>No Supabase environment variables detected. Seed data is loaded locally so the app is still usable.</p>
+export function AuthPanel({ profile, onSignOut }: AuthPanelProps) {
+  return (
+    <div className="account-menu">
+      <div className="account-menu-avatar">
+        {profile.avatarUrl ? (
+          <img src={profile.avatarUrl} alt={`${profile.displayName}'s avatar`} />
+        ) : (
+          <div className="account-menu-avatar-placeholder">
+            {profile.displayName.split(' ').map((part) => part[0]).join('').toUpperCase()}
+          </div>
+        )}
       </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="auth-card">
-        <div className="badge subtle">Connecting</div>
-        <p>Checking your Supabase session…</p>
+      <div className="account-menu-details">
+        <div className="account-menu-name-row">
+          <span className="account-menu-name">{profile.displayName}</span>
+          {/* <span className="account-menu-badge">Connected</span> */}
+        </div>
+        <div className="account-menu-email">{profile.email ? profile.email : null}</div>
       </div>
-    );
-  }
-
-  if (!profile) {
-    return (
-      <div className="auth-card">
-        <div className="badge warning">Authentication required</div>
-        <p>Sign in with Google to save reviews, add comments, and collaborate in shared mode.</p>
-        <button className="button primary" onClick={() => void onSignIn()}>
-          Sign in with Google
+      <div className="account-menu-actions">
+        {/* <button className="button white">Profile</button>
+        <button className="button white">Settings</button> */}
+        <button className="button white" onClick={() => void onSignOut()}>
+          Sign out
         </button>
       </div>
-    );
-  }
-
-  return (
-    <div className="auth-card">
-      <div className="badge success">Connected</div>
-      <p>
-        <strong>{profile.displayName}</strong>
-        {profile.email ? <> · {profile.email}</> : null}
-      </p>
-      <button className="button secondary" onClick={() => void onSignOut()}>
-        Sign out
-      </button>
     </div>
   );
 }

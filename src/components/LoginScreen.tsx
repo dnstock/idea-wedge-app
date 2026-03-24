@@ -11,7 +11,8 @@ export function LoginScreen({ isConfigured, loading, onSignIn }: Props) {
     <div className="login-screen">
       <div className="login-card">
         <div className="logo">
-          <img src="/light-bulb-idea.png" />
+          {/* <img src="/light-bulb-idea.png" /> */}
+          <img src="/idea-playbook.png" />
         </div>
         <div className="eyebrow warning">Authentication required</div>
         <h1><span className="iridescent-text">{APP_TITLE}</span></h1>

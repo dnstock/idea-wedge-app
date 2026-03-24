@@ -26,7 +26,6 @@ export default function App() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const pendingReviewIdRef = useRef<string | null>(null);
   const [hasSyncedInitialHash, setHasSyncedInitialHash] = useState(false);
-  const isAuthenticated = auth.isAuthenticated;
 
   const TAB_KEYS: TabKey[] = ['workspace', 'reviews', 'compare', 'setup'];
 
@@ -198,30 +197,35 @@ export default function App() {
     return <LoginScreen isConfigured={false} loading={false} onSignIn={() => Promise.resolve()} />;
   }
 
-  if (auth.loading || !isAuthenticated) {
+  if (auth.loading || !auth.profile) {
     return <LoginScreen isConfigured={auth.isConfigured} loading={auth.loading} onSignIn={auth.signInWithGoogle} />;
   }
 
   return (
     <AppShell
+      onReset={handleNewReview}
       headerRight={
         <AuthPanel
-          isConfigured={auth.isConfigured}
-          loading={auth.loading}
           profile={auth.profile}
-          onSignIn={auth.signInWithGoogle}
           onSignOut={auth.signOut}
         />
       }
     >
       <StatsGrid total={stats.total} approved={stats.approved} deferred={stats.deferred} rejected={stats.rejected} />
-      <Tabs activeTab={activeTab} onChange={setActiveTab} onReset={handleNewReview} />
+      <Tabs activeTab={activeTab} onChange={setActiveTab} />
 
       {error ? <div className="error-banner">{error}</div> : null}
 
       {activeTab === 'workspace' ? (
         <div className="workspace-grid">
-          <ReviewForm review={currentReview} onChange={syncReview} onSave={handleSave} saving={saving} isNewIdea={!isCurrentReviewSaved} />
+          <ReviewForm
+            profile={auth.profile}
+            review={currentReview}
+            onChange={syncReview}
+            onSave={handleSave}
+            saving={saving}
+            isNewIdea={!isCurrentReviewSaved}
+          />
           <div className="workspace-sidebar">
               <DecisionCard review={currentReview} verdict={verdict} />
               <CommentsPanel canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} />
