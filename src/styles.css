@@ -330,6 +330,13 @@ code {
   color: #1d4ed8;
 }
 
+.badge.demo {
+  background: var(--pinkpurple-text);
+  color: white;
+  background-clip: padding-box, border-box;
+  -webkit-background-clip: padding-box, border-box;
+}
+
 .eyebrow.subtle,
 .badge.subtle {
   background: #e2e8f0;

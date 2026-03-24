@@ -34,6 +34,7 @@ export function ReviewForm({ profile, review, onChange, onSave, saving, isNewIde
 
   const submittedDisplay = isNewIdea ? null : <span className="badge subtle unsticky" title={review.createdAt.toString()}>Submitted: {new Date(review.createdAt).toLocaleDateString()}</span>;
   const updatedDisplay = isNewIdea || review.updatedAt === review.createdAt ? null : <span className="badge subtle unsticky" title={review.updatedAt.toString()}>Updated: {new Date(review.updatedAt).toLocaleDateString()}</span>;
+  const demoDisplay = review.isDemo ? <span className="badge demo unsticky">Demo Idea</span> : null;
 
   if (isNewIdea && !review.ownerName) {
     review = { ...review, ownerName: profile.displayName };
@@ -45,11 +46,11 @@ export function ReviewForm({ profile, review, onChange, onSave, saving, isNewIde
       <div ref={stickyRef} className="section-header sticky-header">
         <div>
           <h2><span className="iridescent-text">{headerContent.title}</span></h2>
-          {submittedDisplay} {updatedDisplay}
+          {submittedDisplay} {updatedDisplay} {demoDisplay}
           <p className="unsticky">{headerContent.subtitle}</p>
         </div>
         <div className="inline-actions">
-          <button className="button primary nobreak" onClick={onSave} type="button" disabled={saving}>
+          <button className="button primary nobreak" onClick={onSave} type="button" disabled={review.isDemo || saving}>
             {saving ? headerContent.buttonLabelSaving : headerContent.buttonLabel}
           </button>
         </div>

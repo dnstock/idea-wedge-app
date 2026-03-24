@@ -36,6 +36,7 @@ export interface ReviewRecord {
   riskScore: ScoreValue;
   decision: DecisionLabel | null;
   overallScore: number;
+  isDemo: boolean | false;
 }
 
 export interface ReviewComment {

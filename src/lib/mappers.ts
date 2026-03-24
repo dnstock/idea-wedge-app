@@ -35,6 +35,7 @@ export function mapDbReview(row: Record<string, unknown>): ReviewRecord {
     riskScore: String(row.risk_score ?? 'unknown') as ReviewRecord['riskScore'],
     decision: row.decision ? (String(row.decision) as ReviewRecord['decision']) : null,
     overallScore: Number(row.overall_score ?? 0),
+    isDemo: Boolean(row.is_demo ?? false),
   };
 }
 
@@ -73,6 +74,7 @@ export function mapReviewForDb(review: ReviewRecord): Record<string, unknown> {
     risk_score: review.riskScore,
     decision: review.decision,
     overall_score: review.overallScore,
+    is_demo: review.isDemo,
   };
 }
 

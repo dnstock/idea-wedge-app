@@ -38,6 +38,7 @@ export function createEmptyReview(authorName = ''): ReviewRecord {
     riskScore: 'unknown',
     decision: null,
     overallScore: 0,
+    isDemo: false,
   };
 }
 

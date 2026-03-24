@@ -83,6 +83,7 @@ export function SavedReviewsView({
                 {review.updatedAt !== review.createdAt ? (
                   <span title={review.updatedAt.toString()} className="badge subtle">Updated: {new Date(review.updatedAt).toLocaleDateString()}</span>
                 ) : null}
+                {review.isDemo ? <span className="badge demo">Demo Idea</span> : null}
               </div>
 
               <div className="score-mini-grid">
@@ -104,7 +105,7 @@ export function SavedReviewsView({
                 <button className="button primary" type="button" onClick={() => onOpen(review)}>
                   Open
                 </button>
-                <button className="button secondary" type="button" onClick={() => void onDelete(review.id)}>
+                <button className="button secondary" type="button" disabled={review.isDemo} onClick={() => void onDelete(review.id)}>
                   Delete
                 </button>
                 <button
