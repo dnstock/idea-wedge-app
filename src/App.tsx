@@ -14,6 +14,7 @@ import { createEmptyReview } from './lib/demoData';
 import { getVerdict } from './lib/scoring';
 import { useAuth } from './hooks/useAuth';
 import { useReviews } from './hooks/useReviews';
+import { TAB_KEYS } from './config';
 import type { ReviewRecord, ReviewStatus, TabKey } from './types';
 
 export default function App() {
@@ -26,8 +27,6 @@ export default function App() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const pendingReviewIdRef = useRef<string | null>(null);
   const [hasSyncedInitialHash, setHasSyncedInitialHash] = useState(false);
-
-  const TAB_KEYS: TabKey[] = ['workspace', 'reviews', 'compare', 'setup'];
 
   function buildHash(tab: TabKey, reviewId?: string, comparedIds: string[] = []) {
     if (tab === 'workspace') {
@@ -53,6 +52,10 @@ export default function App() {
     };
   }
 
+  function isTabKey(key: string): key is TabKey {
+    return (TAB_KEYS as readonly string[]).includes(key);
+  }
+
   useEffect(() => {
     function syncFromHash() {
       if(!auth.profile) {
@@ -61,7 +64,7 @@ export default function App() {
       }
 
       const { tab, reviewId, compareIds: hashCompareIds } = parseHash();
-      const nextTab = TAB_KEYS.includes(tab) ? tab : 'workspace';
+      const nextTab = isTabKey(tab) ? tab : 'workspace';
       setActiveTab(nextTab);
 
       if (nextTab === 'compare') {

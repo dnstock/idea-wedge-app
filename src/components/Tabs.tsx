@@ -1,3 +1,4 @@
+import { TAB_KEYS } from '../config';
 import type { TabKey } from '../types';
 
 interface TabsProps {
@@ -5,15 +6,10 @@ interface TabsProps {
   onChange: (tab: TabKey) => void;
 }
 
-const allTabs: TabKey[] = ['workspace', 'reviews', 'compare'];
-const devTabs: TabKey[] = ['setup'];
-
-const tabs: TabKey[] = allTabs.concat(import.meta.env.DEV ? devTabs : []);
-
 export function Tabs({ activeTab, onChange }: TabsProps) {
   return (
     <div className="tabs">
-      {tabs.map((tab) => (
+      {TAB_KEYS.map((tab) => (
         <button
           key={tab}
           className={`tab ${activeTab === tab ? 'active' : ''}`}

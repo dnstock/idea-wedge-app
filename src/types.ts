@@ -1,3 +1,5 @@
+import { TAB_KEYS } from './config';
+
 export type ScoreValue = 'strong' | 'medium' | 'weak' | 'unknown';
 export type ReviewStatus = 'backlog' | 'researching' | 'approved' | 'deferred' | 'rejected' | 'building';
 export type DecisionLabel = 'Approve' | 'Defer' | 'Reject';
@@ -61,4 +63,4 @@ export interface Verdict {
   reason: string;
 }
 
-export type TabKey = 'workspace' | 'reviews' | 'compare' | 'setup';
+export type TabKey = (typeof TAB_KEYS)[number];

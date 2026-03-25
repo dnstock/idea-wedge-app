@@ -1,5 +1,13 @@
 export const APP_TITLE = 'Idea Wedge Playbook';
 
+const TABS = ['workspace', 'reviews', 'compare'] as const;
+const TABS_DEV = ['setup'] as const;  // only accessible in dev env
+
+export const TAB_KEYS = [
+  ...TABS,
+  ...(import.meta.env.DEV ? TABS_DEV : []),
+] as const;
+
 export const STATUS_OPTIONS = [
   'backlog',
   'researching',
