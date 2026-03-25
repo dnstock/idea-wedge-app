@@ -17,7 +17,7 @@ export function AppShell({ headerRight, children, onReset }: AppShellProps) {
             <span className="app-header-dot" />
             <span className="app-header-meta-item">Review &amp; Validate Business Ideas</span>
           </div> */}
-          <img className="app-header-logo" src="/light-bulb-idea.png" />
+          <img className="app-header-logo" src={"/light-bulb-idea" + (import.meta.env.DEV ? '-local' : '') + ".png"} />
           {/* <img className="app-header-logo" src="/idea-playbook.png" /> */}
           <h1 className="app-header-title">{APP_TITLE}</h1>
           <div className="app-header-description">

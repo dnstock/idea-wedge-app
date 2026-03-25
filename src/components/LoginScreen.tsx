@@ -7,14 +7,17 @@ type Props = {
 };
 
 export function LoginScreen({ isConfigured, loading, onSignIn }: Props) {
+  const devDisplay = import.meta.env.DEV ? <div className="eyebrow subtle" style={{ float: 'right' }}>Local Dev</div> : null;
+
   return (
     <div className="login-screen">
       <div className="login-card">
         <div className="logo">
           {/* <img src="/light-bulb-idea.png" /> */}
-          <img src="/idea-playbook.png" />
+          <img src={"/idea-playbook" + (import.meta.env.DEV ? '-local' : '') + ".png"} />
         </div>
-        <div className="eyebrow warning">Authentication required</div>
+        {devDisplay}
+        <div className="eyebrow magenta">Authentication required</div>
         <h1><span className="iridescent-text">{APP_TITLE}</span></h1>
 
         {isConfigured ? (

@@ -22,6 +22,7 @@
   --bg-gradient: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
   --bg-gradient-alt1: linear-gradient(180deg, #f5f3ff 0%, var(--bg) 100%);
   --bg-gradient-alt2: linear-gradient(180deg, #fff7ed 0%, var(--bg) 100%);
+  --magenta: #EA33A9;
 }
 
 * {
@@ -353,6 +354,11 @@ code {
 .badge.success {
   background: var(--success-bg);
   color: #065f46;
+}
+
+.eyebrow.magenta {
+  background: var(--magenta);
+  color: white;
 }
 
 .stats-grid {
