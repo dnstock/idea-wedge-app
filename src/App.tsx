@@ -225,6 +225,7 @@ export default function App() {
           <ReviewForm
             profile={auth.profile}
             review={currentReview}
+            comments={currentComments}
             onChange={syncReview}
             onSave={handleSave}
             saving={saving}
@@ -240,6 +241,7 @@ export default function App() {
       {activeTab === 'reviews' ? (
         <SavedReviewsView
           reviews={filteredReviews}
+          commentsByReview={commentsByReview}
           query={query}
           statusFilter={statusFilter}
           compareIds={compareIds}

@@ -6,7 +6,10 @@ import { getOverallScore, getVerdict } from '../lib/scoring';
 import type { ReviewComment, ReviewRecord, UserProfile } from '../types';
 
 function sortReviews(items: ReviewRecord[]): ReviewRecord[] {
-  return [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  return [...items].sort((a, b) => {
+    if (a.isDemo !== b.isDemo) return a.isDemo ? 1 : -1;  // always put real records first
+    return b.updatedAt.localeCompare(a.updatedAt);
+  });
 }
 
 export function useReviews(profile: UserProfile | null) {
@@ -26,7 +29,7 @@ export function useReviews(profile: UserProfile | null) {
       setLoading(true);
       setError('');
       const [reviewsResult, commentsResult] = await Promise.all([
-        supabase.from('idea_reviews').select('*').order('updated_at', { ascending: false }),
+        supabase.from('idea_reviews').select('*').order('is_demo', { ascending: true }).order('updated_at', { ascending: false }),
         supabase.from('idea_comments').select('*').order('created_at', { ascending: false }),
       ]);
 

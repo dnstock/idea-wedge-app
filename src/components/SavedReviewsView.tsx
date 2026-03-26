@@ -1,8 +1,9 @@
 import { scoreToLabel } from '../lib/scoring';
-import type { ReviewRecord, ReviewStatus } from '../types';
+import type { ReviewRecord, ReviewComment, ReviewStatus } from '../types';
 
 interface SavedReviewsViewProps {
   reviews: ReviewRecord[];
+  commentsByReview: Record<string, ReviewComment[]>;
   query: string;
   statusFilter: 'all' | ReviewStatus;
   compareIds: string[];
@@ -18,6 +19,7 @@ const statuses: Array<'all' | ReviewStatus> = ['all', 'backlog', 'researching', 
 
 export function SavedReviewsView({
   reviews,
+  commentsByReview,
   query,
   statusFilter,
   compareIds,
@@ -28,6 +30,12 @@ export function SavedReviewsView({
   onDelete,
   onToggleCompare,
 }: SavedReviewsViewProps) {
+
+  const commentCountBadge = (reviewId: string) => {
+    const commentCount = commentsByReview[reviewId]?.length;
+    return commentCount ? <span className="badge success outlined">{commentCount} comment{commentCount===1?'':'s'}</span> : null;
+  }
+
   return (
     <section className="card section-stack">
       <div className="section-header">
@@ -69,15 +77,16 @@ export function SavedReviewsView({
                             {tag.trim()}
                           </span>
                         ))
-                      : null}
+                      : <span className="no-tags">--</span>
+                    }
                   </div>
                 </div>
                 <span className="review-status">{review.status}</span>
               </div>
 
               <div className="badge-row">
-                <span className="badge">{review.decision ?? 'Pending'}</span>
-                <span className="badge subtle">{review.overallScore}/100</span>
+                <span className="badge">{review.decision ?? 'Pending'}<span className="split">{review.overallScore}/100</span></span>
+                {commentCountBadge(review.id)}
                 {review.ownerName ? <span className="badge subtle">Owner: {review.ownerName}</span> : null}
                 <span title={review.createdAt.toString()} className="badge subtle">Submitted: {new Date(review.createdAt).toLocaleDateString()}</span>
                 {review.updatedAt !== review.createdAt ? (

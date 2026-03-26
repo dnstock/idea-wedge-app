@@ -1,10 +1,11 @@
 import { useStickyState } from '../hooks/useStickyState';
 import { SCORE_OPTIONS, SECTION_DEFINITIONS, STATUS_OPTIONS } from '../config';
-import type { ReviewRecord, UserProfile } from '../types';
+import type { ReviewRecord, UserProfile, ReviewComment } from '../types';
 
 interface ReviewFormProps {
   profile: UserProfile;
   review: ReviewRecord;
+  comments: ReviewComment[];
   onChange: (next: ReviewRecord) => void;
   onSave: () => void;
   saving: boolean;
@@ -15,7 +16,7 @@ function updateField(review: ReviewRecord, key: keyof ReviewRecord, value: strin
   return { ...review, [key]: value };
 }
 
-export function ReviewForm({ profile, review, onChange, onSave, saving, isNewIdea }: ReviewFormProps) {
+export function ReviewForm({ profile, review, comments, onChange, onSave, saving, isNewIdea }: ReviewFormProps) {
   const { sentinelRef, stickyRef } = useStickyState();
 
   const headerContent = isNewIdea
@@ -34,6 +35,7 @@ export function ReviewForm({ profile, review, onChange, onSave, saving, isNewIde
 
   const submittedDisplay = isNewIdea ? null : <span className="badge subtle unsticky" title={review.createdAt.toString()}>Submitted: {new Date(review.createdAt).toLocaleDateString()}</span>;
   const updatedDisplay = isNewIdea || review.updatedAt === review.createdAt ? null : <span className="badge subtle unsticky" title={review.updatedAt.toString()}>Updated: {new Date(review.updatedAt).toLocaleDateString()}</span>;
+  const commentsDisplay = comments?.length ? <span className="badge success outlined">{comments.length} comment{comments.length===1?'':'s'}</span> : null;
   const demoDisplay = review.isDemo ? <span className="badge demo unsticky">Demo Idea</span> : null;
 
   if (isNewIdea && !review.ownerName) {
@@ -46,7 +48,7 @@ export function ReviewForm({ profile, review, onChange, onSave, saving, isNewIde
       <div ref={stickyRef} className="section-header sticky-header">
         <div>
           <h2><span className="iridescent-text">{headerContent.title}</span></h2>
-          {submittedDisplay} {updatedDisplay} {demoDisplay}
+          {submittedDisplay} {updatedDisplay} {commentsDisplay} {demoDisplay}
           <p className="unsticky">{headerContent.subtitle}</p>
         </div>
         <div className="inline-actions">
