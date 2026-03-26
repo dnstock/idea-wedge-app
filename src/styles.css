@@ -996,6 +996,14 @@ img, svg, video, canvas, audio, iframe, embed, object {
   padding: 14px;
 }
 
+.footer-app-version {
+  display: block;
+  margin: 8px 15px 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
 
 /*** DATABASE VIEW ***/
 

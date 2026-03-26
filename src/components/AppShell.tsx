@@ -35,6 +35,7 @@ export function AppShell({ headerRight, children, onReset }: AppShellProps) {
         </button>
       </header>
       {children}
+      <div className="footer-app-version">App rev. {__COMMIT_HASH__}</div>
     </div>
   );
 }
