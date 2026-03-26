@@ -11,7 +11,6 @@ function deriveDisplayName(session: Session | null): string {
 
 function getAvatarUrl(session: Session | null): string | null {
   if (!session?.user) return null;
-  console.log('Session user metadata:', session.user.user_metadata);
   const metadata = session.user.user_metadata as Record<string, unknown> | undefined;
   return String(metadata?.avatar_url || null);
 }

@@ -23,6 +23,9 @@
   --bg-gradient-alt1: linear-gradient(180deg, #f5f3ff 0%, var(--bg) 100%);
   --bg-gradient-alt2: linear-gradient(180deg, #fff7ed 0%, var(--bg) 100%);
   --magenta: #EA33A9;
+  --code-text: #e2e8f0;
+  --code-bg: #2D2D2D;
+  --code-bg-darker: #0f172a;
 }
 
 * {
@@ -48,6 +51,11 @@ button {
 
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+img, svg, video, canvas, audio, iframe, embed, object {
+  vertical-align: middle;
+  display: block;
 }
 
 .nobreak {
@@ -505,6 +513,7 @@ code {
   border-radius: 14px;
   padding: 11px 14px;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .button.primary {
@@ -987,6 +996,192 @@ code {
   padding: 14px;
 }
 
+
+/*** DATABASE VIEW ***/
+
+.database-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.database-view .section-header {
+  margin-bottom: 0;
+}
+
+.database-block h3 {
+  margin: 0;
+}
+
+.database-block-header p,
+.database-client-card span,
+.database-kv-card span,
+.database-secret-card span,
+.database-copy-row code,
+.database-action-row code {
+  color: var(--muted);
+}
+
+.database-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 20px;
+}
+
+.database-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.database-block {
+  margin-top: 0;
+}
+
+.database-block-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.database-block-header p {
+  margin: 8px 0 0;
+}
+
+.database-block-header.stretch,
+.database-action-row.stretch {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+
+.database-block-header .badge,
+.database-client-card .badge {
+  float: right;
+}
+
+.database-kv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.database-kv-card,
+.database-secret-card,
+.database-client-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: white;
+}
+
+.database-kv-card,
+.database-secret-card {
+  padding: 14px;
+}
+
+.database-kv-card span,
+.database-secret-card span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.database-kv-card code,
+.database-secret-card code,
+.database-client-card code {
+  display: block;
+  word-break: break-word;
+  font-size: 0.94rem;
+  color: var(--text);
+}
+
+.database-copy-row,
+.database-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.database-copy-row code,
+.database-action-row code {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.database-copy-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.database-copy-button,
+.database-reveal-button,
+.database-cert-link {
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
+.database-cert-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  padding: 15px;
+}
+
+.database-cert-link span {
+  margin-bottom: 0;
+}
+
+.database-cert-link-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.database-cert-link-icon svg {
+  width: 18px;
+}
+
+.database-client-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.database-client-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.database-client-card:hover {
+  transform: translateY(-1px);
+  border-color: #bfdbfe;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.database-client-card strong {
+  color: var(--text);
+}
+
+.database-client-card code {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--code-bg);
+  color: var(--code-text);
+}
+
 @media (max-width: 1120px) {
   .app-header,
   .workspace-grid,
@@ -997,6 +1192,11 @@ code {
 
   .sticky-card {
     position: static;
+  }
+
+  .database-grid,
+  .database-client-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1059,5 +1259,20 @@ code {
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
+  }
+
+  .database-kv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .database-block-header,
+  .database-copy-row,
+  .database-action-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .database-copy-actions {
+    justify-content: flex-end;
   }
 }
