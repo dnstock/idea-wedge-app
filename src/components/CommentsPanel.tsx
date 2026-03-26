@@ -27,7 +27,7 @@ export function CommentsPanel({ canComment, comments, onAddComment }: CommentsPa
     <section className="card comments-card">
       <div className="section-header compact">
         <div>
-          <h2>Team comments</h2>
+          <h2>Team Comments ({comments.length})</h2>
           <p>Capture objections, next-step suggestions, or stress tests against the current review.</p>
         </div>
       </div>
@@ -57,7 +57,7 @@ export function CommentsPanel({ canComment, comments, onAddComment }: CommentsPa
                     <strong>{comment.authorName}</strong>
                     <span>{new Date(comment.createdAt).toLocaleString()}</span>
                   </div>
-                  <p>{comment.body}</p>
+                  <p className="comment-body">{comment.body}</p>
                 </article>
               ))
             )}
