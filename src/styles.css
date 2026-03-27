@@ -749,9 +749,9 @@ img, svg, video, canvas, audio, iframe, embed, object {
 }
 
 .login-card .logo {
-  display: block;
+  display: flex;
+  justify-content: center;
   margin: 0 auto 24px;
-  text-align: center;
 }
 
 .login-card .logo img {
