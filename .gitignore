@@ -13,3 +13,5 @@ skills-lock.json
 .claude/
 .continue/
 skills/
+
+migrate*
