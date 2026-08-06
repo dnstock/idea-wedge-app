@@ -35,6 +35,7 @@ export function createEmptyReview(authorName = ''): ReviewRecord {
     killShot: '',
     mitigation: '',
     riskScore: 'unknown',
+    narrative: '',
     decision: null,
     overallScore: 0,
     isDemo: false,
