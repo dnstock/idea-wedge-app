@@ -1224,6 +1224,15 @@ img, svg, video, canvas, audio, iframe, embed, object {
 
 .playbook-view {
   flex: 1;
+  position: relative;
+}
+
+.playbook-view #view-in-google-docs {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .playbook-view .doc-content p {
