@@ -1,4 +1,4 @@
-import { TAB_KEYS } from '../config';
+import { TAB_KEYS, TAB_LABELS } from '../config';
 import type { TabKey } from '../types';
 
 interface TabsProps {
@@ -16,7 +16,7 @@ export function Tabs({ activeTab, onChange }: TabsProps) {
           onClick={() => onChange(tab)}
           type="button"
         >
-          {tab}
+          {TAB_LABELS[tab] || tab}
         </button>
       ))}
     </div>

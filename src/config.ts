@@ -1,12 +1,17 @@
 export const APP_TITLE = 'Idea Wedge Playbook';
 
-const TABS = ['workspace', 'reviews', 'compare', 'database'] as const;
+const TABS = ['workspace', 'reviews', 'compare', 'database', 'theplaybook'] as const;
 const TABS_DEV = ['setup'] as const;  // only accessible in dev env
 
 export const TAB_KEYS = [
   ...TABS,
   ...(import.meta.env.DEV ? TABS_DEV : []),
 ] as const;
+
+// Define labels for tabs that need a more user-friendly name than the key
+export const TAB_LABELS: Record<string, string> = {
+  theplaybook: 'the playbook',
+};
 
 export const STATUS_OPTIONS = [
   'backlog',

@@ -9,6 +9,7 @@ import { ReviewForm } from './components/ReviewForm';
 import { SavedReviewsView } from './components/SavedReviewsView';
 import { SetupView } from './components/SetupView';
 import { DatabaseView } from './components/DatabaseView';
+import { ThePlaybookView } from './components/ThePlaybookView';
 import { StatsGrid } from './components/StatsGrid';
 import { Tabs } from './components/Tabs';
 import { createEmptyReview } from './lib/demoData';
@@ -257,6 +258,7 @@ export default function App() {
       {activeTab === 'compare' ? <CompareView reviews={compareReviews} /> : null}
       {activeTab === 'setup' ? <SetupView /> : null}
       {activeTab === 'database' ? <DatabaseView /> : null}
+      {activeTab === 'theplaybook' ? <ThePlaybookView /> : null}
     </AppShell>
   );
 }
