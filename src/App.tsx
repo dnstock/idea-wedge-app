@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AppShell } from './components/AppShell';
 import { LoginScreen } from './components/LoginScreen';
 import { AuthPanel } from './components/AuthPanel';
@@ -16,18 +16,17 @@ import { createEmptyReview } from './lib/demoData';
 import { getVerdict } from './lib/scoring';
 import { useAuth } from './hooks/useAuth';
 import { useReviews } from './hooks/useReviews';
-import { TAB_KEYS } from './config';
+import { TAB_KEYS, TAB_LABELS } from './config';
 import type { ReviewRecord, ReviewStatus, TabKey } from './types';
 
 export default function App() {
   const auth = useAuth();
-  const { reviews, commentsByReview, loading, saving, error, setError, saveReview, deleteReview, addComment } = useReviews(auth.profile);
+  const { reviews, commentsByReview, loading, loaded, saving, error, setError, saveReview, deleteReview, addComment } = useReviews(auth.profile);
   const [activeTab, setActiveTab] = useState<TabKey>('workspace');
   const [currentReview, setCurrentReview] = useState<ReviewRecord>(() => createEmptyReview(''));
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ReviewStatus>('all');
   const [compareIds, setCompareIds] = useState<string[]>([]);
-  const pendingReviewIdRef = useRef<string | null>(null);
   const [hasSyncedInitialHash, setHasSyncedInitialHash] = useState(false);
 
   function buildHash(tab: TabKey, reviewId?: string, comparedIds: string[] = []) {
@@ -60,8 +59,7 @@ export default function App() {
 
   useEffect(() => {
     function syncFromHash() {
-      if(!auth.profile) {
-        setHasSyncedInitialHash(true);
+      if (!auth.profile || !loaded) {
         return;
       }
 
@@ -78,13 +76,15 @@ export default function App() {
           const existing = reviews.find((review) => review.id === reviewId);
           if (existing) {
             setCurrentReview(existing);
-            pendingReviewIdRef.current = null;
           } else {
-            pendingReviewIdRef.current = reviewId;
+            setCurrentReview(
+              createEmptyReview(auth.profile.displayName || '')
+            );
           }
         } else {
-          setCurrentReview(createEmptyReview(auth.profile?.displayName || ''));
-          pendingReviewIdRef.current = null;
+          setCurrentReview(
+            createEmptyReview(auth.profile.displayName || '')
+          );
         }
       }
 
@@ -94,16 +94,7 @@ export default function App() {
     syncFromHash();
     window.addEventListener('hashchange', syncFromHash);
     return () => window.removeEventListener('hashchange', syncFromHash);
-  }, [reviews, auth.profile]);
-
-  useEffect(() => {
-    if (!auth.profile || !pendingReviewIdRef.current) return;
-    const found = reviews.find((review) => review.id === pendingReviewIdRef.current);
-    if (found) {
-      setCurrentReview(found);
-      pendingReviewIdRef.current = null;
-    }
-  }, [auth.profile, reviews]);
+  }, [reviews, loaded, auth.profile]);
 
   useEffect(() => {
     if (!auth.profile || !hasSyncedInitialHash) return;
@@ -111,7 +102,7 @@ export default function App() {
     const reviewIdForHash = reviews.some((review) => review.id === currentReview.id) ? currentReview.id : 'new';
     const desiredHash = buildHash(activeTab, reviewIdForHash, compareIds);
     if (window.location.hash !== desiredHash) {
-      window.history.replaceState(null, '', desiredHash);
+      window.history.pushState(null, '', desiredHash);
     }
   }, [activeTab, compareIds, currentReview.id, hasSyncedInitialHash, reviews]);
 
@@ -158,14 +149,12 @@ export default function App() {
   }
 
   function handleNewReview() {
-    pendingReviewIdRef.current = null;
     setCurrentReview(createEmptyReview(auth.profile?.displayName || ''));
     setActiveTab('workspace');
     setError('');
   }
 
   function handleOpen(review: ReviewRecord) {
-    pendingReviewIdRef.current = null;
     setCurrentReview(review);
     setActiveTab('workspace');
   }
@@ -198,6 +187,10 @@ export default function App() {
     }
   }
 
+  function getActiveTab() {
+    return hasSyncedInitialHash ? activeTab : null;
+  }
+
   if (!auth.isConfigured) {
     return <LoginScreen isConfigured={false} loading={false} onSignIn={() => Promise.resolve()} />;
   }
@@ -221,7 +214,13 @@ export default function App() {
 
       {error ? <div className="error-banner">{error}</div> : null}
 
-      {activeTab === 'workspace' ? (
+      {!hasSyncedInitialHash ? (
+        <section className="card loading-state">
+          <div className="iridescent-text">Loading {TAB_LABELS[activeTab] || activeTab}…</div>
+        </section>
+      ) : null}
+
+      {getActiveTab() === 'workspace' ? (
         <div className="workspace-grid">
           <ReviewForm
             profile={auth.profile}
@@ -239,14 +238,13 @@ export default function App() {
         </div>
       ) : null}
 
-      {activeTab === 'reviews' ? (
+      {getActiveTab() === 'reviews' ? (
         <SavedReviewsView
           reviews={filteredReviews}
           commentsByReview={commentsByReview}
           query={query}
           statusFilter={statusFilter}
           compareIds={compareIds}
-          loading={loading}
           onQueryChange={setQuery}
           onStatusFilterChange={setStatusFilter}
           onOpen={handleOpen}
@@ -255,10 +253,10 @@ export default function App() {
         />
       ) : null}
 
-      {activeTab === 'compare' ? <CompareView reviews={compareReviews} /> : null}
-      {activeTab === 'setup' ? <SetupView /> : null}
-      {activeTab === 'database' ? <DatabaseView /> : null}
-      {activeTab === 'theplaybook' ? <ThePlaybookView /> : null}
+      {getActiveTab() === 'compare' ? <CompareView reviews={compareReviews} /> : null}
+      {getActiveTab() === 'setup' ? <SetupView /> : null}
+      {getActiveTab() === 'database' ? <DatabaseView /> : null}
+      {getActiveTab() === 'theplaybook' ? <ThePlaybookView /> : null}
     </AppShell>
   );
 }

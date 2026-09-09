@@ -852,6 +852,14 @@ img, svg, video, canvas, audio, iframe, embed, object {
   background: var(--surface-alt);
 }
 
+.loading-state {
+  display: flex;
+  padding: 18px;
+  /* align-items: center;
+  justify-content: center; */
+  min-height: 200px;
+}
+
 .comment-body {
   white-space: pre-wrap;
 }

@@ -15,22 +15,34 @@ function sortReviews(items: ReviewRecord[]): ReviewRecord[] {
 export function useReviews(profile: UserProfile | null) {
   const [reviews, setReviews] = useState<ReviewRecord[]>(sortReviews(seededReviews));
   const [commentsByReview, setCommentsByReview] = useState<Record<string, ReviewComment[]>>(seededComments);
+  const [loadedForProfileId, setLoadedForProfileId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(isSupabaseConfigured);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string>('');
+  const loaded = !supabase || (!!profile && loadedForProfileId === profile.id);
 
   useEffect(() => {
     async function load() {
       if (!supabase || !profile) {
         setLoading(false);
+        setLoadedForProfileId(null);
         return;
       }
 
       setLoading(true);
+      setLoadedForProfileId(null);
       setError('');
       const [reviewsResult, commentsResult] = await Promise.all([
-        supabase.from('idea_reviews').select('*').order('is_demo', { ascending: true }).order('updated_at', { ascending: false }),
-        supabase.from('idea_comments').select('*').order('created_at', { ascending: false }),
+        supabase
+          .from('idea_reviews')
+          .select('*')
+          .order('is_demo', { ascending: true })
+          .order('updated_at', { ascending: false }),
+
+        supabase
+          .from('idea_comments')
+          .select('*')
+          .order('created_at', { ascending: false }),
       ]);
 
       if (reviewsResult.error) {
@@ -43,14 +55,17 @@ export function useReviews(profile: UserProfile | null) {
       setReviews(sortReviews(nextReviews));
 
       if (!commentsResult.error) {
-        const grouped = (commentsResult.data ?? []).map(mapDbComment).reduce<Record<string, ReviewComment[]>>((acc, current) => {
-          if (!acc[current.reviewId]) acc[current.reviewId] = [];
-          acc[current.reviewId].push(current);
-          return acc;
-        }, {});
+        const grouped = (commentsResult.data ?? [])
+          .map(mapDbComment)
+          .reduce<Record<string, ReviewComment[]>>((acc, current) => {
+            if (!acc[current.reviewId]) acc[current.reviewId] = [];
+            acc[current.reviewId].push(current);
+            return acc;
+          }, {});
         setCommentsByReview(grouped);
       }
 
+      setLoadedForProfileId(profile.id);
       setLoading(false);
     }
 
@@ -201,6 +216,7 @@ export function useReviews(profile: UserProfile | null) {
     reviews,
     commentsByReview,
     loading,
+    loaded,
     saving,
     error,
     setError,

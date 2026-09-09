@@ -7,7 +7,6 @@ interface SavedReviewsViewProps {
   query: string;
   statusFilter: 'all' | ReviewStatus;
   compareIds: string[];
-  loading: boolean;
   onQueryChange: (value: string) => void;
   onStatusFilterChange: (value: 'all' | ReviewStatus) => void;
   onOpen: (review: ReviewRecord) => void;
@@ -23,7 +22,6 @@ export function SavedReviewsView({
   query,
   statusFilter,
   compareIds,
-  loading,
   onQueryChange,
   onStatusFilterChange,
   onOpen,
@@ -56,9 +54,7 @@ export function SavedReviewsView({
         </select>
       </div>
 
-      {loading ? (
-        <div className="empty-state">Loading reviews…</div>
-      ) : reviews.length === 0 ? (
+      {reviews.length === 0 ? (
         <div className="empty-state">No matching reviews.</div>
       ) : (
         <div className="review-grid">
