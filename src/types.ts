@@ -36,6 +36,7 @@ export interface ReviewRecord {
   killShot: string;
   mitigation: string;
   riskScore: ScoreValue;
+  narrative: string;
   decision: DecisionLabel | null;
   overallScore: number;
   isDemo: boolean | false;

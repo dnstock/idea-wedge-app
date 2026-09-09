@@ -1,6 +1,7 @@
 import { useStickyState } from '../hooks/useStickyState';
-import { SCORE_OPTIONS, SECTION_DEFINITIONS, STATUS_OPTIONS } from '../config';
+import { NARRATIVE_SECTION, SCORE_OPTIONS, SECTION_DEFINITIONS, STATUS_OPTIONS } from '../config';
 import type { ReviewRecord, UserProfile, ReviewComment } from '../types';
+import { MarkdownField } from './MarkdownField';
 
 interface ReviewFormProps {
   profile: UserProfile;
@@ -145,6 +146,25 @@ export function ReviewForm({ profile, review, comments, onChange, onSave, saving
             </div>
           </details>
         ))}
+
+        <details className="accordion-item narrative-item">
+          <summary>
+            <div>
+              <strong>{NARRATIVE_SECTION.title}</strong> <span className="badge subtle">Not scored</span>
+              <p>{NARRATIVE_SECTION.description}</p>
+            </div>
+          </summary>
+          <div className="accordion-content">
+            <div className="field">
+              <span>{NARRATIVE_SECTION.field.label}</span>
+              <MarkdownField
+                value={review.narrative}
+                onChange={(value) => onChange(updateField(review, 'narrative', value))}
+                placeholder={NARRATIVE_SECTION.field.placeholder}
+              />
+            </div>
+          </div>
+        </details>
       </div>
     </section>
   );

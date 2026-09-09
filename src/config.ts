@@ -87,3 +87,20 @@ export const SECTION_DEFINITIONS = [
     ],
   },
 ] as const;
+
+// Deliberately not part of SECTION_DEFINITIONS: that array is the five scored
+// gates, and DecisionCard/CompareView render exactly those five. This is
+// supporting context, carries no confidence score, and is never numbered
+// alongside them.
+export const NARRATIVE_SECTION = {
+  key: 'narrative',
+  title: 'Supporting Research',
+  description:
+    'Optional. The long-form evidence behind the gates above — competitor tables, quoted reviews, pricing data, sources.',
+  field: {
+    key: 'narrative',
+    label: 'Full research write-up (Markdown)',
+    placeholder:
+      'Paste the long-form research here.\n\nMarkdown is supported, including tables:\n\n| Product | Reviews | Price |\n| --- | --- | --- |\n| Example | 1,234 | $19/mo |\n\n> Quoted review text\n',
+  },
+} as const;
