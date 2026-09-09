@@ -27,11 +27,11 @@ export function ThePlaybookView() {
       )}
       <div className="gdoc-wrapper">
         {loading && (
-          <div className="p-4 text-gray-500">Idea Wedge Playbook is loading...</div>
+          <span className="iridescent-text">Loading the playbook&hellip;</span>
         )}
 
         {error && (
-          <div className="p-4 text-red-500 border border-red-200 rounded">
+          <div className="error-banner">
             {error}
           </div>
         )}

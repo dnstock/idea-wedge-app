@@ -59,13 +59,13 @@ export default function App() {
 
   useEffect(() => {
     function syncFromHash() {
-      if (!auth.profile || !loaded) {
-        return;
-      }
-
       const { tab, reviewId, compareIds: hashCompareIds } = parseHash();
       const nextTab = isTabKey(tab) ? tab : 'workspace';
       setActiveTab(nextTab);
+
+      if (!auth.profile || !loaded) {
+        return;
+      }
 
       if (nextTab === 'compare') {
         setCompareIds(hashCompareIds);
@@ -216,7 +216,7 @@ export default function App() {
 
       {!hasSyncedInitialHash ? (
         <section className="card loading-state">
-          <div className="iridescent-text">Loading {TAB_LABELS[activeTab] || activeTab}…</div>
+          <div className="iridescent-text">Loading {TAB_LABELS[activeTab] || activeTab}&hellip;</div>
         </section>
       ) : null}
 
