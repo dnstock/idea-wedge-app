@@ -253,7 +253,7 @@ export default function App() {
         />
       ) : null}
 
-      {getActiveTab() === 'compare' ? <CompareView reviews={compareReviews} /> : null}
+      {getActiveTab() === 'compare' ? <CompareView reviews={compareReviews} onOpen={handleOpen} onChooseReviews={() => setActiveTab('reviews')} /> : null}
       {getActiveTab() === 'setup' ? <SetupView /> : null}
       {getActiveTab() === 'database' ? <DatabaseView /> : null}
       {getActiveTab() === 'theplaybook' ? <ThePlaybookView /> : null}
