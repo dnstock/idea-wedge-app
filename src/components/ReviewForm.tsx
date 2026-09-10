@@ -60,27 +60,11 @@ export function ReviewForm({ profile, review, comments, onChange, onSave, saving
 
       <div className="two-column-grid">
         <label className="field">
-          <span>Idea name</span>
-          <input
-            value={review.ideaName}
-            onChange={(event) => onChange(updateField(review, 'ideaName', event.target.value))}
-            placeholder="e.g. lightweight B2B documentation platform"
-          />
-        </label>
-        <label className="field">
-          <span>Owner</span>
+          <span>Submitter(s)</span>
           <input
             value={review.ownerName}
             onChange={(event) => onChange(updateField(review, 'ownerName', event.target.value))}
             placeholder="Who owns this investigation?"
-          />
-        </label>
-        <label className="field field-full">
-          <span>One-line summary</span>
-          <input
-            value={review.summary}
-            onChange={(event) => onChange(updateField(review, 'summary', event.target.value))}
-            placeholder="What does it do and for whom?"
           />
         </label>
         <label className="field">
@@ -94,11 +78,27 @@ export function ReviewForm({ profile, review, comments, onChange, onSave, saving
           </select>
         </label>
         <label className="field">
+          <span>Idea name</span>
+          <textarea
+            value={review.ideaName}
+            onChange={(event) => onChange(updateField(review, 'ideaName', event.target.value))}
+            placeholder="e.g. lightweight B2B documentation platform"
+          />
+        </label>
+        <label className="field">
           <span>Tags</span>
-          <input
+          <textarea
             value={review.tags}
             onChange={(event) => onChange(updateField(review, 'tags', event.target.value))}
             placeholder="comma-separated tags"
+          />
+        </label>
+        <label className="field field-full">
+          <span>One-line summary</span>
+          <textarea
+            value={review.summary}
+            onChange={(event) => onChange(updateField(review, 'summary', event.target.value))}
+            placeholder="What does it do and for whom?"
           />
         </label>
       </div>
@@ -118,14 +118,14 @@ export function ReviewForm({ profile, review, comments, onChange, onSave, saving
                   <span>{field.label}</span>
                   {field.type === 'textarea' ? (
                     <textarea
-                      value={String(review[field.key as keyof ReviewRecord] ?? '')}
-                      onChange={(event) => onChange(updateField(review, field.key as keyof ReviewRecord, event.target.value))}
+                      value={String(review[field.key] ?? '')}
+                      onChange={(event) => onChange(updateField(review, field.key, event.target.value))}
                       placeholder={field.placeholder}
                     />
                   ) : field.type === 'select' ? (
                     <select
-                      value={String(review[field.key as keyof ReviewRecord] ?? 'unknown')}
-                      onChange={(event) => onChange(updateField(review, field.key as keyof ReviewRecord, event.target.value))}
+                      value={String(review[field.key] ?? 'unknown')}
+                      onChange={(event) => onChange(updateField(review, field.key, event.target.value))}
                     >
                       {SCORE_OPTIONS.map((option) => (
                         <option key={option.value} value={option.value}>
@@ -133,13 +133,13 @@ export function ReviewForm({ profile, review, comments, onChange, onSave, saving
                         </option>
                       ))}
                     </select>
-                  ) : (
+                  ) : field.type === 'text' ? (
                     <input
-                      value={String(review[field.key as keyof ReviewRecord] ?? '')}
-                      onChange={(event) => onChange(updateField(review, field.key as keyof ReviewRecord, event.target.value))}
+                      value={String(review[field.key] ?? '')}
+                      onChange={(event) => onChange(updateField(review, field.key, event.target.value))}
                       placeholder={field.placeholder}
                     />
-                  )}
+                  ) : null }
                 </label>
               ))}
             </div>

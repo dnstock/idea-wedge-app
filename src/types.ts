@@ -4,6 +4,22 @@ export type ScoreValue = 'strong' | 'medium' | 'weak' | 'unknown';
 export type ReviewStatus = 'backlog' | 'researching' | 'approved' | 'deferred' | 'rejected' | 'building';
 export type DecisionLabel = 'Approve' | 'Defer' | 'Reject';
 
+export type FieldType = 'textarea' | 'select' | 'text';
+
+export type FieldDefinition = {
+  key: keyof ReviewRecord;
+  label: string;
+  type: FieldType;
+  placeholder?: string;
+};
+
+export type SectionDefinition = {
+  key: string;
+  title: string;
+  description: string;
+  fields: readonly FieldDefinition[];
+};
+
 export interface ReviewRecord {
   id: string;
   createdAt: string;

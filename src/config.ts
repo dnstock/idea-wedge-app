@@ -1,3 +1,5 @@
+import { SectionDefinition } from './types';
+
 export const APP_TITLE = 'Idea Wedge Playbook';
 
 const TABS = ['workspace', 'reviews', 'compare', 'database', 'theplaybook'] as const;
@@ -29,13 +31,13 @@ export const SCORE_OPTIONS = [
   { value: 'unknown', label: 'Unknown' },
 ] as const;
 
-export const SECTION_DEFINITIONS = [
+export const SECTION_DEFINITIONS: readonly SectionDefinition[] = [
   {
     key: 'market',
     title: '1. Market Exists',
     description: 'Confirm that this is an existing buying category with real customers and visible competitors.',
     fields: [
-      { key: 'category', label: 'Category / market', type: 'text', placeholder: 'e.g. customer feedback SaaS for B2B teams' },
+      { key: 'category', label: 'Category / market', type: 'textarea', placeholder: 'e.g. customer feedback SaaS for B2B teams' },
       { key: 'competitors', label: 'Known competitors', type: 'textarea', placeholder: 'List active competitors, pricing pages, or review sites' },
       { key: 'proof', label: 'Evidence customers already pay', type: 'textarea', placeholder: 'Pricing pages, testimonials, G2 reviews, case studies, search demand' },
       { key: 'marketScore', label: 'Confidence', type: 'select' },
@@ -68,8 +70,8 @@ export const SECTION_DEFINITIONS = [
     title: '4. Distribution Path',
     description: 'Identify a plausible first route to customers before approving the idea.',
     fields: [
-      { key: 'buyer', label: 'First buyer', type: 'text', placeholder: 'e.g. Head of Support at 20-200 person SaaS companies' },
-      { key: 'channel', label: 'First channel', type: 'text', placeholder: 'e.g. outbound, SEO, niche communities, channel partner, paid ads' },
+      { key: 'buyer', label: 'First buyer', type: 'textarea', placeholder: 'e.g. Head of Support at 20-200 person SaaS companies' },
+      { key: 'channel', label: 'First channel', type: 'textarea', placeholder: 'e.g. outbound, SEO, niche communities, channel partner, paid ads' },
       { key: 'message', label: 'First message', type: 'textarea', placeholder: 'What sharp claim gets attention?' },
       { key: 'proofPoint', label: 'First proof point', type: 'textarea', placeholder: 'Why should someone trust the outreach?' },
       { key: 'distributionScore', label: 'Confidence', type: 'select' },
@@ -86,4 +88,4 @@ export const SECTION_DEFINITIONS = [
       { key: 'riskScore', label: 'Confidence', type: 'select' },
     ],
   },
-] as const;
+];
