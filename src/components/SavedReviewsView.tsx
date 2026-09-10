@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useStickyState } from '../hooks/useStickyState';
 import { scoreToLabel } from '../lib/scoring';
 import type { ReviewRecord, ReviewComment, ReviewStatus } from '../types';
 
@@ -8,6 +9,9 @@ interface SavedReviewsViewProps {
   query: string;
   statusFilter: 'all' | ReviewStatus;
   compareIds: string[];
+  selectedReviews: ReviewRecord[];
+  onCompare: () => void;
+  onClearCompare: () => void;
   onQueryChange: (value: string) => void;
   onStatusFilterChange: (value: 'all' | ReviewStatus) => void;
   onOpen: (review: ReviewRecord) => void;
@@ -19,9 +23,10 @@ const statuses: Array<'all' | ReviewStatus> = ['all', 'backlog', 'researching', 
 const dateLabel = (value: string) => new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
 export function SavedReviewsView({
-  reviews, commentsByReview, query, statusFilter, compareIds,
+  reviews, commentsByReview, query, statusFilter, compareIds, selectedReviews, onCompare, onClearCompare,
   onQueryChange, onStatusFilterChange, onOpen, onDelete, onToggleCompare,
 }: SavedReviewsViewProps) {
+  const { sentinelRef, stickyRef } = useStickyState();
   const [view, setView] = useState<'1col' | '2col'>('1col');
   const [sortBy, setSortBy] = useState<'createdAt' | 'updatedAt'>('updatedAt');
   const [direction, setDirection] = useState<'newest' | 'oldest'>('newest');
@@ -36,6 +41,27 @@ export function SavedReviewsView({
         <div>
           <h2>Saved reviews</h2>
           <p>Explore ideas, revisit a review, or select two to compare.</p>
+        </div>
+      </div>
+      <div ref={sentinelRef} className="sticky-sentinel" />
+      <div ref={stickyRef} className="reviews-compare-tray" role="region" aria-label="Compare selected ideas">
+        <div className="reviews-compare-instructions">
+          <strong>Compare ideas</strong>
+          <p role="status">{selectedReviews.length === 2 ? 'Ready to compare. Remove an idea to choose another.' : selectedReviews.length === 1 ? 'Choose one more idea to compare.' : 'Select two ideas to compare their scores, evidence, and risks.'}</p>
+        </div>
+        <div className="reviews-compare-slots">
+          {[0, 1].map((index) => {
+            const review = selectedReviews[index];
+            return <div className={`reviews-compare-slot${review ? ' is-filled' : ''}`} key={index}>
+              <span className="comparison-letter">{index === 0 ? 'A' : 'B'}</span>
+              <span className="reviews-compare-name" title={review?.ideaName}>{review ? review.ideaName || 'Untitled idea' : `Select ${index === 0 ? 'first' : 'second'} idea`}</span>
+              {review && <button type="button" className="reviews-compare-remove" aria-label={`Remove ${review.ideaName || 'Untitled idea'} from comparison`} onClick={() => onToggleCompare(review.id)}>×</button>}
+            </div>;
+          })}
+        </div>
+        <div className="reviews-compare-controls">
+          <button type="button" className="button primary" disabled={selectedReviews.length !== 2} onClick={onCompare}>Compare<span className="compare-cta-extra"> ideas</span> ({selectedReviews.length}/2)</button>
+          {selectedReviews.length > 0 && <button type="button" className="button ghost reviews-compare-clear" onClick={onClearCompare}>Clear selection</button>}
         </div>
       </div>
       <div className="toolbar reviews-toolbar">
@@ -115,7 +141,10 @@ export function SavedReviewsView({
                 </details>
                 <div className="review-actions">
                   <button className="button primary" type="button" onClick={() => onOpen(review)}>Open review</button>
-                  <button className={`button ${selected ? 'primary' : 'secondary'}`} type="button" aria-pressed={selected} onClick={() => onToggleCompare(review.id)}>{selected ? 'Selected' : 'Compare'}</button>
+                  <label className="review-compare-checkbox">
+                    <input type="checkbox" checked={selected} disabled={!selected && selectedReviews.length === 2} onChange={() => onToggleCompare(review.id)} aria-label={`Select ${review.ideaName || 'Untitled idea'} for comparison`} />
+                    <span>Compare</span>
+                  </label>
                   <button className="button ghost review-delete" type="button" disabled={review.isDemo} onClick={() => void onDelete(review.id)}>Delete</button>
                 </div>
               </article>

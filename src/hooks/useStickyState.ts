@@ -12,7 +12,7 @@ export function useStickyState() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        sticky.classList.toggle('is-stuck', !entry.isIntersecting);
+        sticky.classList.toggle('is-stuck', !entry.isIntersecting && entry.boundingClientRect.top < 0);
       },
       {
         threshold: 0,

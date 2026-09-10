@@ -119,7 +119,7 @@ export default function App() {
     });
   }, [query, reviews, statusFilter]);
 
-  const compareReviews = useMemo(() => reviews.filter((review) => compareIds.includes(review.id)).slice(0, 2), [compareIds, reviews]);
+  const compareReviews = useMemo(() => compareIds.map((id) => reviews.find((review) => review.id === id)).filter((review): review is ReviewRecord => Boolean(review)).slice(0, 2), [compareIds, reviews]);
 
   const stats = useMemo(() => {
     return {
@@ -175,7 +175,8 @@ export default function App() {
   function handleToggleCompare(id: string) {
     setCompareIds((current) => {
       if (current.includes(id)) return current.filter((value) => value !== id);
-      return [...current, id].slice(-2);
+      const existing = current.filter((value) => reviews.some((review) => review.id === value));
+      return existing.length < 2 ? [...existing, id] : existing;
     });
   }
 
@@ -245,6 +246,9 @@ export default function App() {
           query={query}
           statusFilter={statusFilter}
           compareIds={compareIds}
+          selectedReviews={compareReviews}
+          onCompare={() => setActiveTab('compare')}
+          onClearCompare={() => setCompareIds([])}
           onQueryChange={setQuery}
           onStatusFilterChange={setStatusFilter}
           onOpen={handleOpen}
