@@ -1539,10 +1539,10 @@ img, svg, video, canvas, audio, iframe, embed, object {
   .comparison-evidence-section summary { transition: none; }
 }
 
-/* Keep comparison selection visible while browsing and filtering reviews. */
+/* Bugfix to prevent sticky elements from scrolling to anchors
+   See https://developer.chrome.com/blog/scroll-anchoring/ */
+.workspace-grid,
 .saved-reviews {
-  /* The compact tray changes height. Anchoring to a review below it would
-     undo small scrolls and repeatedly toggle the tray's sticky state. */
   overflow-anchor: none;
 }
 .reviews-compare-tray { position: sticky; top: 12px; z-index: 10; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 20px; margin-bottom: 24px; padding: 18px; border: 1px solid #bfdbfe; border-radius: 12px; background: #f8fbff; box-shadow: 0 4px 16px rgb(15 23 42 / 6%); }
