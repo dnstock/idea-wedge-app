@@ -27,7 +27,7 @@ export function CompareView({ reviews, onOpen, onChooseReviews }: CompareViewPro
   if (reviews.length < 2) {
     return (
       <section className="card section-stack comparison-view">
-        <div className="section-header"><div><h2>Compare ideas</h2><p>Evaluate two ideas against the same playbook gates.</p></div></div>
+        <div className="section-header"><div><h2>Compare Idea Wedges</h2><p>Evaluate two ideas against the same playbook gates.</p></div></div>
         <div className="empty-state">
           <h3>{reviews.length === 1 ? 'Choose one more idea' : 'Choose two ideas to compare'}</h3>
           <p>{reviews.length === 1 ? `${reviews[0].ideaName || 'Untitled idea'} is selected. Choose another review to see them side by side.` : 'Use Compare on two saved reviews to examine their scores, evidence, and risks together.'}</p>
@@ -43,7 +43,7 @@ export function CompareView({ reviews, onOpen, onChooseReviews }: CompareViewPro
   return (
     <section className="card section-stack comparison-view">
       <div className="section-header">
-        <div><h2>Compare ideas</h2><p>Compare the scores, then examine the evidence behind each idea.</p></div>
+        <div><h2>Compare Idea Wedges</h2><p>Compare the scores, then examine the evidence behind each idea.</p></div>
         <button type="button" className="button secondary" onClick={onChooseReviews}>Change ideas</button>
       </div>
 

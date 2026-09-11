@@ -41,14 +41,14 @@ export function SavedReviewsView({
     <section className="card section-stack saved-reviews">
       <div className="section-header">
         <div>
-          <h2>Saved reviews</h2>
-          <p>Explore ideas, revisit a review, or select two to compare.</p>
+          <h2>Idea Wedge Submissions</h2>
+          <p>Explore, review, and compare submitted ideas.</p>
         </div>
       </div>
       <div ref={sentinelRef} className="sticky-sentinel" />
       <div ref={stickyRef} className="reviews-compare-tray" role="region" aria-label="Compare selected ideas">
         <div className="reviews-compare-instructions">
-          <strong>Compare ideas</strong>
+          <strong>Compare idea wedges</strong>
           <p role="status">{selectedReviews.length === 2 ? 'Ready to compare. Remove an idea to choose another.' : selectedReviews.length === 1 ? 'Choose one more idea to compare.' : 'Select two ideas to compare their scores, evidence, and risks.'}</p>
         </div>
         <div className="reviews-compare-slots">
@@ -68,7 +68,7 @@ export function SavedReviewsView({
       </div>
       <div className="toolbar reviews-toolbar">
         <label className="field reviews-search">
-          <span>Search reviews</span>
+          <span>Search submissions</span>
           <input type="search" value={query} onChange={(event) => onQueryChange(event.target.value)} placeholder="Ideas, owners, tags, categories" />
         </label>
         <label className="field">
@@ -103,7 +103,7 @@ export function SavedReviewsView({
         </div>
       )}
       <div className="reviews-result-count" role="status">
-        <span>{reviews.length} review{reviews.length === 1 ? '' : 's'}{query || tagFilter || statusFilter !== 'all' ? ' found' : ''}</span>
+        <span>{reviews.length} idea{reviews.length === 1 ? '' : 's'}{query || tagFilter || statusFilter !== 'all' ? ' found' : ''}</span>
         {compareIds.length > 0 && <span>{compareIds.length} selected for comparison</span>}
       </div>
       {reviews.length === 0 ? (

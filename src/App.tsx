@@ -23,7 +23,7 @@ import type { ReviewRecord, ReviewStatus, TabKey } from './types';
 export default function App() {
   const auth = useAuth();
   const { reviews, commentsByReview, loading, loaded, saving, error, setError, saveReview, deleteReview, addComment } = useReviews(auth.profile);
-  const [activeTab, setActiveTab] = useState<TabKey>('workspace');
+  const [activeTab, setActiveTab] = useState<TabKey>('reviews');
   const [currentReview, setCurrentReview] = useState<ReviewRecord>(() => createEmptyReview(''));
   const [reviewMode, setReviewMode] = useState<'read' | 'edit' | 'present'>('edit');
   const [missingReview, setMissingReview] = useState(false);
@@ -54,7 +54,7 @@ export default function App() {
     return {
       mode,
       tag: new URLSearchParams(search).get('tag') || '',
-      tab: (tab || 'workspace') as TabKey,
+      tab: (tab || 'reviews') as TabKey,
       reviewId: tab === 'workspace' ? value : undefined,
       compareIds: tab === 'compare' && value ? value.split(',').filter(Boolean).slice(0, 2) : [],
     };
@@ -67,7 +67,7 @@ export default function App() {
   useEffect(() => {
     function syncFromHash() {
       const { tab, reviewId, mode, tag, compareIds: hashCompareIds } = parseHash();
-      const nextTab = isTabKey(tab) ? tab : 'workspace';
+      const nextTab = isTabKey(tab) ? tab : 'reviews';
       setActiveTab(nextTab);
 
       if (!auth.profile || !loaded) {
@@ -235,8 +235,8 @@ export default function App() {
         />
       }
     >
-      {!(activeTab === 'workspace' && reviewMode === 'read') && <StatsGrid total={stats.total} approved={stats.approved} deferred={stats.deferred} rejected={stats.rejected} />}
       <Tabs activeTab={activeTab} onChange={setActiveTab} />
+      {activeTab === 'reviews' && <StatsGrid total={stats.total} approved={stats.approved} deferred={stats.deferred} rejected={stats.rejected} />}
 
       {error ? <div className="error-banner">{error}</div> : null}
 

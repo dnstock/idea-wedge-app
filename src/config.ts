@@ -2,7 +2,7 @@ import { SectionDefinition } from './types';
 
 export const APP_TITLE = 'Idea Wedge Playbook';
 
-const TABS = ['workspace', 'reviews', 'compare', 'theplaybook', 'database'] as const;
+const TABS = ['reviews', 'workspace', 'compare', 'theplaybook', 'database'] as const;
 const TABS_DEV = ['setup'] as const;  // only accessible in dev env
 
 export const TAB_KEYS = [
@@ -12,6 +12,8 @@ export const TAB_KEYS = [
 
 // Define labels for tabs that need a more user-friendly name than the key
 export const TAB_LABELS: Record<string, string> = {
+  reviews: 'Ideas',
+  workspace: 'Review',
   theplaybook: 'the playbook',
 };
 

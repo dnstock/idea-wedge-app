@@ -9,7 +9,7 @@ export function StatsGrid({ total, approved, deferred, rejected }: StatsGridProp
   return (
     <section className="stats-grid">
       <article className="stat-card card">
-        <span>Total reviews</span>
+        <span>Total submissions</span>
         <strong>{total}</strong>
       </article>
       <article className="stat-card card success-surface">
