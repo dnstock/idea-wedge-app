@@ -24,6 +24,7 @@ export default function App() {
   const { reviews, commentsByReview, loading, loaded, saving, error, setError, saveReview, deleteReview, addComment } = useReviews(auth.profile);
   const [activeTab, setActiveTab] = useState<TabKey>('workspace');
   const [currentReview, setCurrentReview] = useState<ReviewRecord>(() => createEmptyReview(''));
+  const [tagFilter, setTagFilter] = useState('');
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ReviewStatus>('all');
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -39,14 +40,17 @@ export default function App() {
       return serializedIds ? `#${tab}/${serializedIds}` : `#${tab}`;
     }
 
-    return `#${tab}`;
+    return `#${tab}${tab === 'reviews' && tagFilter ? `?tag=${encodeURIComponent(tagFilter)}` : ''}`;
   }
 
   function parseHash(hash = window.location.hash) {
     const cleaned = hash.replace(/^#\/?/, '');
-    const [tab, value] = cleaned.split('/');
+    const [path, search = ''] = cleaned.split('?');
+    const [tab, value, mode] = path.split('/');
 
     return {
+      mode,
+      tag: new URLSearchParams(search).get('tag') || '',
       tab: (tab || 'workspace') as TabKey,
       reviewId: tab === 'workspace' ? value : undefined,
       compareIds: tab === 'compare' && value ? value.split(',').filter(Boolean).slice(0, 2) : [],
@@ -59,7 +63,7 @@ export default function App() {
 
   useEffect(() => {
     function syncFromHash() {
-      const { tab, reviewId, compareIds: hashCompareIds } = parseHash();
+      const { tab, reviewId, mode, tag, compareIds: hashCompareIds } = parseHash();
       const nextTab = isTabKey(tab) ? tab : 'workspace';
       setActiveTab(nextTab);
 
@@ -71,6 +75,10 @@ export default function App() {
         setCompareIds(hashCompareIds);
       }
 
+      if (nextTab === 'reviews') {
+        setTagFilter(tag);
+        if (tag) { setQuery(''); setStatusFilter('all'); }
+      }
       if (nextTab === 'workspace') {
         if (reviewId && reviewId !== 'new') {
           const existing = reviews.find((review) => review.id === reviewId);
@@ -115,9 +123,10 @@ export default function App() {
       const haystack = [review.ideaName, review.summary, review.ownerName, review.tags, review.category].join(' ').toLowerCase();
       const matchesQuery = !query || haystack.includes(query.toLowerCase());
       const matchesStatus = statusFilter === 'all' || review.status === statusFilter;
-      return matchesQuery && matchesStatus;
+      const matchesTag = !tagFilter || review.tags.split(',').some(tag => tag.trim().toLowerCase() === tagFilter.toLowerCase());
+      return matchesQuery && matchesStatus && matchesTag;
     });
-  }, [query, reviews, statusFilter]);
+  }, [query, reviews, statusFilter, tagFilter]);
 
   const compareReviews = useMemo(() => compareIds.map((id) => reviews.find((review) => review.id === id)).filter((review): review is ReviewRecord => Boolean(review)).slice(0, 2), [compareIds, reviews]);
 
@@ -244,6 +253,8 @@ export default function App() {
           reviews={filteredReviews}
           commentsByReview={commentsByReview}
           query={query}
+          tagFilter={tagFilter}
+          onClearTagFilter={() => setTagFilter('')}
           statusFilter={statusFilter}
           compareIds={compareIds}
           selectedReviews={compareReviews}

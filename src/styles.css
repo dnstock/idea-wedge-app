@@ -1594,3 +1594,10 @@ img, svg, video, canvas, audio, iframe, embed, object {
   .reviews-compare-tray.is-stuck .reviews-compare-controls .button { padding-inline: 8px; white-space: nowrap; }
   .reviews-compare-tray.is-stuck .reviews-compare-remove { width: 24px; }
 }
+.tag-row a.tag { text-decoration: none; transition: background .15s, border-color .15s; }
+.tag-row a.tag:hover, .tag-row a.tag:focus-visible { background: #eff6ff; border-color: var(--primary); color: var(--primary); }
+.reviews-active-filter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-alt); margin-bottom: 10px; }
+.reviews-active-filter .tag-row { margin: 0; min-width: 0; }
+.reviews-active-filter strong { color: var(--text); font-size: 14px; }
+.reviews-active-filter .tag { background: var(--surface); overflow-wrap: anywhere; }
+.reviews-active-filter .button { width: auto; font-size: 13px; }

@@ -7,6 +7,8 @@ interface SavedReviewsViewProps {
   reviews: ReviewRecord[];
   commentsByReview: Record<string, ReviewComment[]>;
   query: string;
+  tagFilter: string;
+  onClearTagFilter: () => void;
   statusFilter: 'all' | ReviewStatus;
   compareIds: string[];
   selectedReviews: ReviewRecord[];
@@ -23,7 +25,7 @@ const statuses: Array<'all' | ReviewStatus> = ['all', 'backlog', 'researching', 
 const dateLabel = (value: string) => new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
 export function SavedReviewsView({
-  reviews, commentsByReview, query, statusFilter, compareIds, selectedReviews, onCompare, onClearCompare,
+  reviews, commentsByReview, query, tagFilter, onClearTagFilter, statusFilter, compareIds, selectedReviews, onCompare, onClearCompare,
   onQueryChange, onStatusFilterChange, onOpen, onDelete, onToggleCompare,
 }: SavedReviewsViewProps) {
   const { sentinelRef, stickyRef } = useStickyState();
@@ -94,12 +96,18 @@ export function SavedReviewsView({
           </select>
         </label>
       </div>
+      {tagFilter && (
+        <div className="reviews-active-filter" role="region" aria-label="Active tag filter">
+          <div className="tag-row"><strong>Filtered by tag</strong><span className="tag">{tagFilter}</span></div>
+          <button type="button" className="button ghost" onClick={onClearTagFilter} aria-label={`Clear tag filter: ${tagFilter}`}>Clear tag filter ×</button>
+        </div>
+      )}
       <div className="reviews-result-count" role="status">
-        <span>{reviews.length} review{reviews.length === 1 ? '' : 's'}{query || statusFilter !== 'all' ? ' found' : ''}</span>
+        <span>{reviews.length} review{reviews.length === 1 ? '' : 's'}{query || tagFilter || statusFilter !== 'all' ? ' found' : ''}</span>
         {compareIds.length > 0 && <span>{compareIds.length} selected for comparison</span>}
       </div>
       {reviews.length === 0 ? (
-        <div className="empty-state">No matching reviews. Try another search or status.</div>
+        <div className="empty-state">No matching reviews. Try changing or clearing your filters.</div>
       ) : (
         <div className={`reviews-list reviews-list--${view}`}>
           {sortedReviews.map((review) => {
@@ -135,7 +143,7 @@ export function SavedReviewsView({
                         ['Distribution', review.distributionScore], ['Risk', review.riskScore],
                       ] as const).map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{scoreToLabel[value]}</dd></div>)}
                     </dl>
-                    {tags.length > 0 && <div className="tag-row" aria-label="Tags">{tags.map((tag, index) => <span key={`${tag}-${index}`} className="tag">{tag}</span>)}</div>}
+                    {tags.length > 0 && <div className="tag-row" aria-label="Tags">{tags.map((tag, index) => <a key={`${tag}-${index}`} className="tag" href={`#reviews?tag=${encodeURIComponent(tag)}`}>{tag}</a>)}</div>}
                     <p className="saved-review-dates">Created {dateLabel(review.createdAt)} · Updated {dateLabel(review.updatedAt)}</p>
                   </div>
                 </details>
