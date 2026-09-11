@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { SECTION_DEFINITIONS } from '../config';
 import { getOverallScore, getVerdict, scoreToLabel } from '../lib/scoring';
 import type { ReviewRecord, ScoreValue } from '../types';
@@ -12,6 +12,7 @@ interface Props {
 }
 
 export function ReviewReader({ review, presenting, onEdit, onPresent, onBack }: Props) {
+  const readerRef = useRef<HTMLDivElement>(null);
   const [shareMessage, setShareMessage] = useState('');
   const verdict = getVerdict(review);
   useEffect(() => {
@@ -21,6 +22,23 @@ export function ReviewReader({ review, presenting, onEdit, onPresent, onBack }: 
   }, [onPresent]);
 
   useEffect(() => { window.scrollTo(0, 0); }, [presenting, review.id]);
+
+  // Wrapped headings and the presentation toolbar determine the sticky offsets.
+  useLayoutEffect(() => {
+    const reader = readerRef.current;
+    if (!reader) return;
+    const toolbar = reader.querySelector<HTMLElement>('.reader-toolbar');
+    const headings = reader.querySelectorAll<HTMLElement>('.reader-section-heading');
+    const measure = () => {
+      reader.style.setProperty('--reader-sticky-top', `${presenting && toolbar ? toolbar.getBoundingClientRect().height : 0}px`);
+      headings.forEach(heading => heading.parentElement?.style.setProperty('--reader-heading-height', `${heading.getBoundingClientRect().height}px`));
+    };
+    const observer = new ResizeObserver(measure);
+    if (toolbar) observer.observe(toolbar);
+    headings.forEach(heading => observer.observe(heading));
+    measure();
+    return () => observer.disconnect();
+  }, [presenting, review.id]);
 
   function jumpTo(id: string) {
     document.getElementById(id)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
@@ -37,7 +55,7 @@ export function ReviewReader({ review, presenting, onEdit, onPresent, onBack }: 
     }
   }
 
-  return <div className={`review-reader${presenting ? ' is-presenting' : ''}`}>
+  return <div ref={readerRef} className={`review-reader${presenting ? ' is-presenting' : ''}`}>
     <div className="reader-toolbar">
       <button className="button ghost" onClick={presenting ? () => onPresent(false) : onBack}>{presenting ? '← Exit presentation' : '← Saved reviews'}</button>
       <div className="inline-actions">
@@ -52,11 +70,23 @@ export function ReviewReader({ review, presenting, onEdit, onPresent, onBack }: 
     </div>
     {shareMessage && !presenting && <div className="reader-share" role="status">{shareMessage}<input aria-label="Reading link" readOnly value={`${window.location.href.split('#')[0]}#workspace/${review.id}`} onFocus={(event) => event.target.select()} /></div>}
     <div className="reader-layout">
+      <aside className="reader-sidebar">
       <nav className="reader-nav" aria-label="Review sections">
         <span>IN THIS REVIEW</span>
         <button onClick={() => jumpTo('reader-overview')}>Overview</button>
         {SECTION_DEFINITIONS.map((section) => <button key={section.key} onClick={() => jumpTo(`reader-${section.key}`)}>{section.title}</button>)}
       </nav>
+      <section className="reader-score-summary" aria-label="Review score summary">
+        <div className="reader-score-total"><span>Overall score</span><strong>{getOverallScore(review)}<small> / 100</small></strong></div>
+        <span className={`reader-confidence reader-confidence--${verdict.tone === 'success' ? 'strong' : verdict.tone === 'warning' ? 'medium' : 'weak'}`}>{verdict.label}</span>
+        <dl>{SECTION_DEFINITIONS.map(section => {
+          const score = section.fields.find(field => field.type === 'select');
+          if (!score) return null;
+          const value = review[score.key] as ScoreValue;
+          return <div key={section.key}><dt>{({ market: 'Market', wedge: 'Wedge', mvp: 'MVP', distribution: 'Distribution', risk: 'Risk' } as Record<string, string>)[section.key]}</dt><dd className={`reader-confidence reader-confidence--${value}`}>{scoreToLabel[value]}</dd></div>;
+        })}</dl>
+      </section>
+      </aside>
       <article className="reader-document">
         <header id="reader-overview" className="reader-overview">
           <div className="reader-eyebrow">Idea brief <span> / {review.status}</span>{review.isDemo && <span> / Demo</span>}</div>

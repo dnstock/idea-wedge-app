@@ -1676,7 +1676,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .reader-section { margin-top: 32px; padding: 0 0 24px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
 .reader-section-heading { padding: 20px 24px 12px; background: #eff6ff; border-left: 4px solid var(--primary); }
 .reader-section h3 { color: var(--primary-strong); font-size: 22px; }
-.reader-section-description { margin: 0; padding: 0 24px 20px 28px; background: #eff6ff; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.reader-section-description { margin: 0; padding: 0 24px 20px 28px; background: #eff6ff; color: var(--muted); font-size: 14px; line-height: 1.6; border-left: 4px solid var(--primary); box-shadow: 0 1px 0 var(--border); }
 .reader-section dl { margin: 0; gap: 0; }
 .reader-section dl > div { padding: 24px 28px; }
 .reader-section dl > div + div { border-top: 1px solid var(--border); }
@@ -1705,4 +1705,30 @@ img, svg, video, canvas, audio, iframe, embed, object {
   .reader-section-heading { break-after: avoid; }
   .reader-section-description { break-after: avoid; }
   .reader-section dt, .is-presenting .reader-section dt { font-size: 12pt; }
+}
+
+/* Keep the current playbook prompt visible within its own section/field. */
+.review-reader { --reader-sticky-top: 0px; }
+.reader-section { overflow: visible; }
+.reader-section-heading { position: sticky; top: var(--reader-sticky-top); z-index: 3; border-radius: 13px 13px 0 0; }
+.reader-section dt { position: sticky; top: calc(var(--reader-sticky-top) + var(--reader-heading-height, 80px)); z-index: 2; background: var(--surface); padding: 10px 0; margin-top: -10px; }
+.reader-section dl > div:nth-child(even) dt { background: var(--surface-alt); }
+.reader-sidebar { position: sticky; top: calc(var(--reader-sticky-top) + 24px); align-self: start; max-height: calc(100dvh - var(--reader-sticky-top) - 48px); overflow-y: auto; }
+.reader-sidebar .reader-nav { position: static; }
+.reader-score-summary { border-top: 1px solid var(--border); margin-top: 20px; padding-top: 18px; }
+.reader-score-total { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.reader-score-total > span { font-size: 13px; color: var(--muted); }
+.reader-score-total strong { font-size: 24px; }
+.reader-score-total small { font-size: 12px; font-weight: 400; color: var(--muted); }
+.reader-score-summary dl { display: grid; gap: 8px; margin: 16px 0 0; }
+.reader-score-summary dl > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.reader-score-summary dt { font-size: 13px; color: var(--muted); }
+.reader-score-summary dd { margin: 0; font-size: 11px; padding: 3px 7px; }
+@media (max-width: 800px) {
+  .reader-sidebar { position: static; max-height: none; overflow: visible; min-width: 0; }
+  .reader-score-summary dl { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px 20px; }
+}
+@media print {
+  .reader-sidebar { display: none; }
+  .reader-section-heading, .reader-section dt { position: static; box-shadow: none; }
 }
