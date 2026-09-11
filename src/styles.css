@@ -1594,6 +1594,78 @@ img, svg, video, canvas, audio, iframe, embed, object {
   .reviews-compare-tray.is-stuck .reviews-compare-controls .button { padding-inline: 8px; white-space: nowrap; }
   .reviews-compare-tray.is-stuck .reviews-compare-remove { width: 24px; }
 }
+
+/* Saved ideas are documents first; the form remains a dedicated editing surface. */
+.review-reader { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; }
+.reader-toolbar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+.reader-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 48px; padding: 40px; }
+.reader-nav { position: sticky; top: 24px; align-self: start; display: grid; gap: 8px; }
+.reader-nav > span, .reader-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.reader-nav > span { margin-bottom: 14px; }
+.reader-nav button { text-align: left; background: none; border: 0; padding: 10px 0; color: var(--muted); line-height: 1.5; transition: color .15s, transform .15s; }
+.reader-nav button:hover { color: var(--primary); transform: translateX(3px); }
+.reader-document { min-width: 0; max-width: 850px; width: 100%; margin: auto; overflow-wrap: anywhere; animation: brief-enter .2s ease-out; }
+.reader-overview, .reader-section { scroll-margin-top: 28px; }
+.reader-overview h2 { font-size: clamp(30px, 3.6vw, 48px); letter-spacing: -.035em; line-height: 1.12; margin: 20px 0; }
+.reader-summary { font-size: 21px; line-height: 1.65; white-space: pre-wrap; }
+.reader-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; color: var(--muted); }
+.reader-tags { color: var(--muted); font-size: 13px; }
+.reader-verdict { display: flex; justify-content: space-between; gap: 24px; margin-top: 32px; padding: 24px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.reader-verdict span { display: block; color: var(--muted); font-size: 12px; }
+.reader-verdict strong { display: block; font-size: 26px; margin-top: 6px; }
+.reader-verdict p { margin: 8px 0 0; line-height: 1.6; }
+.reader-total { flex-shrink: 0; text-align: right; }
+.reader-total small { font-size: 14px; font-weight: 400; color: var(--muted); }
+.reader-section { padding: 36px 0; border-bottom: 1px solid var(--border); }
+.reader-section-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.reader-section h3 { font-size: 23px; margin: 0; letter-spacing: -.02em; }
+.reader-confidence { font-size: 13px; color: var(--muted); }
+.reader-section dl { margin: 28px 0 0; display: grid; gap: 24px; }
+.reader-section dt { font-size: 13px; font-weight: 650; color: var(--muted); margin-bottom: 8px; }
+.reader-section dd { margin: 0; font-size: 17px; line-height: 1.8; white-space: pre-wrap; }
+.reader-empty { color: var(--muted); font-style: italic; }
+.reader-comments { max-width: 900px; margin: 24px auto; }
+.reader-share { padding: 16px 24px; color: var(--muted); font-size: 14px; }
+.reader-share input { display: block; width: 100%; margin-top: 10px; }
+.reader-hint { color: var(--muted); font-size: 13px; }
+.is-presenting { min-height: 100vh; border: none; border-radius: 0; }
+.is-presenting .reader-layout { max-width: 1440px; margin: auto; }
+.is-presenting .reader-section dd { font-size: 22px; }
+.is-presenting .reader-summary { font-size: 26px; }
+.is-presenting .reader-toolbar { position: sticky; top: 0; background: var(--surface); z-index: 5; }
+.is-presenting .reader-nav { top: 100px; }
+.is-presenting .reader-section, .is-presenting .reader-overview { scroll-margin-top: 100px; }
+@keyframes brief-enter { from { opacity: .5; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .reader-document { animation: none; } .reader-nav button { transition: none; } }
+@media (max-width: 800px) {
+  .reader-layout { grid-template-columns: 1fr; padding: 24px; gap: 24px; }
+  .reader-nav { position: static; display: flex; overflow-x: auto; gap: 20px; }
+  .reader-nav > span { display: none; }
+  .reader-nav button { flex-shrink: 0; max-width: 170px; }
+  .reader-toolbar { padding: 12px; }
+  .reader-toolbar .inline-actions { flex-wrap: wrap; }
+  .reader-verdict { gap: 12px; }
+}
+@media print {
+  body { background: white; }
+  .app-shell { display: block; max-width: none; padding: 0; }
+  .app-shell > :not(.review-reader), .reader-toolbar, .reader-nav, .reader-share { display: none !important; }
+  .review-reader { border: 0; }
+  .reader-layout { display: block; padding: 0; }
+  .reader-document { max-width: none; animation: none; }
+  .reader-section dl > div, .reader-verdict { break-inside: avoid; }
+  .reader-section h3 { break-after: avoid; }
+  .reader-section dd, .is-presenting .reader-section dd { font-size: 11pt; }
+  .reader-overview h2 { font-size: 28pt; }
+}
+@media (max-width: 800px) {
+  .reader-toolbar .inline-actions { display: flex; flex-direction: row; width: auto; gap: 6px; }
+  .reader-toolbar .button { width: auto; padding: 9px 12px; font-size: 13px; }
+  .reader-toolbar { align-items: center; }
+}
+
+/* Playbook hierarchy: section bands, explicit field prompts, and score signals. */
+.reader-tags.tag-row { margin-top: 18px; }
 .tag-row a.tag { text-decoration: none; transition: background .15s, border-color .15s; }
 .tag-row a.tag:hover, .tag-row a.tag:focus-visible { background: #eff6ff; border-color: var(--primary); color: var(--primary); }
 .reviews-active-filter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-alt); margin-bottom: 10px; }
@@ -1601,3 +1673,36 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .reviews-active-filter strong { color: var(--text); font-size: 14px; }
 .reviews-active-filter .tag { background: var(--surface); overflow-wrap: anywhere; }
 .reviews-active-filter .button { width: auto; font-size: 13px; }
+.reader-section { margin-top: 32px; padding: 0 0 24px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.reader-section-heading { padding: 20px 24px 12px; background: #eff6ff; border-left: 4px solid var(--primary); }
+.reader-section h3 { color: var(--primary-strong); font-size: 22px; }
+.reader-section-description { margin: 0; padding: 0 24px 20px 28px; background: #eff6ff; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.reader-section dl { margin: 0; gap: 0; }
+.reader-section dl > div { padding: 24px 28px; }
+.reader-section dl > div + div { border-top: 1px solid var(--border); }
+.reader-section dl > div:nth-child(even) { background: var(--surface-alt); }
+.reader-section dl > div:last-child { padding-bottom: 0; }
+.reader-section dt { font-size: 17px; font-weight: 750; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
+.reader-confidence { padding: 5px 10px; border-radius: 6px; font-weight: 700; background: #e2e8f0; color: #334155; }
+.reader-confidence--strong { background: var(--success-bg); color: #065f46; }
+.reader-confidence--medium { background: var(--warning-bg); color: #92400e; }
+.reader-confidence--weak { background: var(--danger-bg); color: #9f1239; }
+.reader-verdict { padding: 24px; border: 1px solid var(--border); border-left-width: 5px; border-radius: 12px; }
+.reader-verdict--success { background: var(--success-bg); border-color: var(--success-border); }
+.reader-verdict--warning { background: var(--warning-bg); border-color: var(--warning-border); }
+.reader-verdict--destructive { background: var(--danger-bg); border-color: var(--danger-border); }
+.reader-verdict > div:first-child > span { font-size: 14px; font-weight: 700; color: var(--text); }
+.is-presenting .reader-section dt { font-size: 21px; }
+@media (max-width: 800px) {
+  .reader-section-heading { padding: 18px 16px 10px; }
+  .reader-section-description { padding: 0 16px 18px 20px; }
+  .reader-section dl > div { padding: 20px; }
+  .reader-verdict { padding: 18px; }
+}
+@media print {
+  .reader-overview h2.iridescent-text { background: none; color: #8619da; -webkit-text-fill-color: #8619da; }
+  .reader-section { overflow: visible; }
+  .reader-section-heading { break-after: avoid; }
+  .reader-section-description { break-after: avoid; }
+  .reader-section dt, .is-presenting .reader-section dt { font-size: 12pt; }
+}

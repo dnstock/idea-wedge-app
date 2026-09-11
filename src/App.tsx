@@ -5,6 +5,7 @@ import { AuthPanel } from './components/AuthPanel';
 import { CommentsPanel } from './components/CommentsPanel';
 import { CompareView } from './components/CompareView';
 import { DecisionCard } from './components/DecisionCard';
+import { ReviewReader } from './components/ReviewReader';
 import { ReviewForm } from './components/ReviewForm';
 import { SavedReviewsView } from './components/SavedReviewsView';
 import { SetupView } from './components/SetupView';
@@ -24,6 +25,8 @@ export default function App() {
   const { reviews, commentsByReview, loading, loaded, saving, error, setError, saveReview, deleteReview, addComment } = useReviews(auth.profile);
   const [activeTab, setActiveTab] = useState<TabKey>('workspace');
   const [currentReview, setCurrentReview] = useState<ReviewRecord>(() => createEmptyReview(''));
+  const [reviewMode, setReviewMode] = useState<'read' | 'edit' | 'present'>('edit');
+  const [missingReview, setMissingReview] = useState(false);
   const [tagFilter, setTagFilter] = useState('');
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | ReviewStatus>('all');
@@ -32,7 +35,7 @@ export default function App() {
 
   function buildHash(tab: TabKey, reviewId?: string, comparedIds: string[] = []) {
     if (tab === 'workspace') {
-      return `#${tab}/${reviewId ?? 'new'}`;
+      return `#${tab}/${reviewId ?? 'new'}${reviewId !== 'new' && reviewMode !== 'read' ? `/${reviewMode}` : ''}`;
     }
 
     if (tab === 'compare') {
@@ -79,12 +82,15 @@ export default function App() {
         setTagFilter(tag);
         if (tag) { setQuery(''); setStatusFilter('all'); }
       }
+      setMissingReview(false);
       if (nextTab === 'workspace') {
+        setReviewMode(reviewId && reviewId !== 'new' ? (mode === 'edit' || mode === 'present' ? mode : 'read') : 'edit');
         if (reviewId && reviewId !== 'new') {
           const existing = reviews.find((review) => review.id === reviewId);
           if (existing) {
             setCurrentReview(existing);
           } else {
+            setMissingReview(true);
             setCurrentReview(
               createEmptyReview(auth.profile.displayName || '')
             );
@@ -105,14 +111,14 @@ export default function App() {
   }, [reviews, loaded, auth.profile]);
 
   useEffect(() => {
-    if (!auth.profile || !hasSyncedInitialHash) return;
+    if (!auth.profile || !hasSyncedInitialHash || (missingReview && activeTab === 'workspace')) return;
 
     const reviewIdForHash = reviews.some((review) => review.id === currentReview.id) ? currentReview.id : 'new';
     const desiredHash = buildHash(activeTab, reviewIdForHash, compareIds);
     if (window.location.hash !== desiredHash) {
       window.history.pushState(null, '', desiredHash);
     }
-  }, [activeTab, compareIds, currentReview.id, hasSyncedInitialHash, reviews]);
+  }, [activeTab, compareIds, currentReview.id, hasSyncedInitialHash, reviews, reviewMode, missingReview, tagFilter]);
 
   const verdict = useMemo(() => getVerdict(currentReview), [currentReview]);
   const currentComments = commentsByReview[currentReview.id] ?? [];
@@ -152,18 +158,24 @@ export default function App() {
       };
       const saved = await saveReview(payload);
       setCurrentReview(saved);
+      setReviewMode('read');
+      window.history.replaceState(null, '', `#workspace/${saved.id}`);
     } catch {
       // handled in hook state
     }
   }
 
   function handleNewReview() {
+    setReviewMode('edit');
+    setMissingReview(false);
     setCurrentReview(createEmptyReview(auth.profile?.displayName || ''));
     setActiveTab('workspace');
     setError('');
   }
 
   function handleOpen(review: ReviewRecord) {
+    setReviewMode('read');
+    setMissingReview(false);
     setCurrentReview(review);
     setActiveTab('workspace');
   }
@@ -209,6 +221,10 @@ export default function App() {
     return <LoginScreen isConfigured={auth.isConfigured} loading={auth.loading} onSignIn={auth.signInWithGoogle} />;
   }
 
+  const presenting = activeTab === 'workspace' && reviewMode === 'present' && !missingReview;
+  const reader = <ReviewReader key={currentReview.id} review={currentReview} presenting={presenting} onEdit={() => setReviewMode('edit')} onPresent={(value) => setReviewMode(value ? 'present' : 'read')} onBack={() => setActiveTab('reviews')} />;
+  if (presenting) return reader;
+
   return (
     <AppShell
       onReset={handleNewReview}
@@ -219,7 +235,7 @@ export default function App() {
         />
       }
     >
-      <StatsGrid total={stats.total} approved={stats.approved} deferred={stats.deferred} rejected={stats.rejected} />
+      {!(activeTab === 'workspace' && reviewMode === 'read') && <StatsGrid total={stats.total} approved={stats.approved} deferred={stats.deferred} rejected={stats.rejected} />}
       <Tabs activeTab={activeTab} onChange={setActiveTab} />
 
       {error ? <div className="error-banner">{error}</div> : null}
@@ -230,8 +246,12 @@ export default function App() {
         </section>
       ) : null}
 
-      {getActiveTab() === 'workspace' ? (
+      {getActiveTab() === 'workspace' && missingReview ? <section className="card section-stack"><h2>Review unavailable</h2><p>This review may have been deleted, or you may not have access.</p><button className="button primary" onClick={() => setActiveTab('reviews')}>Saved reviews</button></section> : null}
+      {getActiveTab() === 'workspace' && !missingReview && reviewMode === 'read' ? <>{reader}<div className="reader-comments"><CommentsPanel canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} /></div></> : null}
+      {getActiveTab() === 'workspace' && !missingReview && reviewMode === 'edit' ? (
         <div className="workspace-grid">
+          <div>
+          {isCurrentReviewSaved && <button className="button ghost" disabled={saving} onClick={() => { const saved = reviews.find(review => review.id === currentReview.id); if (saved && (JSON.stringify(saved) === JSON.stringify(currentReview) || window.confirm('Discard unsaved changes and return to the review?'))) { setCurrentReview(saved); setReviewMode('read'); } }}>← Cancel editing</button>}
           <ReviewForm
             profile={auth.profile}
             review={currentReview}
@@ -241,6 +261,7 @@ export default function App() {
             saving={saving}
             isNewIdea={!isCurrentReviewSaved}
           />
+          </div>
           <div className="workspace-sidebar">
               <DecisionCard review={currentReview} verdict={verdict} />
               <CommentsPanel canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} />
