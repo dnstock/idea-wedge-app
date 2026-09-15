@@ -1721,7 +1721,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .reader-section-heading { position: sticky; top: var(--reader-sticky-top); z-index: 3; border-radius: 13px 13px 0 0; }
 .reader-section dt { position: sticky; top: calc(var(--reader-sticky-top) + var(--reader-heading-height, 80px)); z-index: 2; background: var(--surface); padding: 10px 0; margin-top: -10px; }
 .reader-section dl > div:nth-child(even) dt { background: var(--surface-alt); }
-.reader-sidebar { position: sticky; top: calc(var(--reader-sticky-top) + 24px); align-self: start; max-height: calc(100dvh - var(--reader-sticky-top) - 48px); overflow-y: auto; }
+.reader-sidebar { position: sticky; top: calc(var(--reader-sticky-top) + 24px); align-self: start; max-height: calc(100dvh - var(--reader-sticky-top) - 48px); }
 .reader-sidebar .reader-nav { position: static; }
 .reader-score-summary { border-top: 1px solid var(--border); margin-top: 20px; padding-top: 18px; }
 .reader-score-total { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
