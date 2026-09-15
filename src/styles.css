@@ -1418,7 +1418,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .saved-review-status.status-approved { background: var(--success-bg); color: #065f46; }
 .saved-review-status.status-rejected { background: var(--danger-bg); color: #991b1b; }
 .saved-review-status.status-deferred { background: var(--warning-bg); color: #92400e; }
-.saved-review h3 { margin: 12px 0 0; font-size: 21px; line-height: 1.35; }
+.saved-review h3 { margin: 0; font-size: 21px; line-height: 1.35; }
 .review-title-button {
   display: inline-block;
   padding: 0;
@@ -1435,6 +1435,14 @@ img, svg, video, canvas, audio, iframe, embed, object {
   text-align: left;
   overflow-wrap: anywhere;
   transition: background-position 280ms ease, transform 180ms ease;
+}
+.saved-review-category-expand-button {
+  display: inline-flex;
+  padding: 0 5px;
+  border: 0;
+  min-height: auto !important;
+  font-size: inherit !important;
+  font-weight: 400 !important;
 }
 .review-title-button:is(:hover, :focus-visible) {
   background-position: 100% 50%;

@@ -32,6 +32,7 @@ export function SavedReviewsView({
   const [view, setView] = useState<'1col' | '2col'>('1col');
   const [sortBy, setSortBy] = useState<'createdAt' | 'updatedAt'>('updatedAt');
   const [direction, setDirection] = useState<'newest' | 'oldest'>('newest');
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(() => new Set());
   const sortedReviews = useMemo(() => [...reviews].sort((a, b) => {
     const difference = Date.parse(a[sortBy]) - Date.parse(b[sortBy]);
     return (direction === 'newest' ? -difference : difference) || a.id.localeCompare(b.id);
@@ -114,10 +115,41 @@ export function SavedReviewsView({
             const selected = compareIds.includes(review.id);
             const commentCount = commentsByReview[review.id]?.length ?? 0;
             const tags = review.tags.split(',').map((tag) => tag.trim()).filter(Boolean);
+            const category = review.category || 'Uncategorized';
+            const categoryIsExpanded = expandedCategories.has(review.id);
+            const categoryIsTruncated = category.length > 66;
             return (
               <article className={`saved-review${selected ? ' is-selected' : ''}`} key={review.id}>
                 <div className="saved-review-heading">
-                  <span className="saved-review-category">{review.category || 'Uncategorized'}</span>
+                  <span className="saved-review-category">
+                    {categoryIsExpanded || !categoryIsTruncated ? category : category.slice(0, 66) + '…'}
+                    {categoryIsTruncated && !categoryIsExpanded && (
+                      <button
+                        type="button"
+                        className="button ghost saved-review-category-expand-button"
+                        aria-label={`Show full category: ${category}`}
+                        title="Show full category"
+                        onClick={() => setExpandedCategories((current) => {
+                          const next = new Set(current);
+                          next.add(review.id);
+                          return next;
+                        })}
+                      >(more)</button>
+                    )}
+                    {categoryIsTruncated && categoryIsExpanded && (
+                      <button
+                        type="button"
+                        className="button ghost saved-review-category-expand-button"
+                        aria-label={`Collapse category: ${category}`}
+                        title="Collapse category"
+                        onClick={() => setExpandedCategories((current) => {
+                          const next = new Set(current);
+                          next.delete(review.id);
+                          return next;
+                        })}
+                      >(less)</button>
+                    )}
+                  </span>
                   <span className={`saved-review-status status-${review.status}`}>{review.status}</span>
                 </div>
                 <h3><button type="button" className="review-title-button" onClick={() => onOpen(review)}>{review.ideaName || 'Untitled idea'}</button></h3>
