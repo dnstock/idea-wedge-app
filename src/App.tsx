@@ -202,11 +202,7 @@ export default function App() {
   }
 
   async function handleAddComment(body: string) {
-    try {
-      await addComment(currentReview.id, body);
-    } catch {
-      // handled in hook state
-    }
+    await addComment(currentReview.id, body);
   }
 
   function getActiveTab() {
@@ -222,7 +218,7 @@ export default function App() {
   }
 
   const presenting = activeTab === 'workspace' && reviewMode === 'present' && !missingReview;
-  const reader = <ReviewReader key={currentReview.id} review={currentReview} presenting={presenting} onEdit={() => setReviewMode('edit')} onPresent={(value) => setReviewMode(value ? 'present' : 'read')} onBack={() => setActiveTab('reviews')} />;
+  const reader = <ReviewReader key={currentReview.id} review={currentReview} comments={currentComments} presenting={presenting} onEdit={() => setReviewMode('edit')} onPresent={(value) => setReviewMode(value ? 'present' : 'read')} onBack={() => setActiveTab('reviews')} />;
   if (presenting) return reader;
 
   return (
@@ -247,7 +243,7 @@ export default function App() {
       ) : null}
 
       {getActiveTab() === 'workspace' && missingReview ? <section className="card section-stack"><h2>Review unavailable</h2><p>This review may have been deleted, or you may not have access.</p><button className="button primary" onClick={() => setActiveTab('reviews')}>Saved reviews</button></section> : null}
-      {getActiveTab() === 'workspace' && !missingReview && reviewMode === 'read' ? <>{reader}<div className="reader-comments"><CommentsPanel canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} /></div></> : null}
+      {getActiveTab() === 'workspace' && !missingReview && reviewMode === 'read' ? <>{reader}<div className="reader-comments"><CommentsPanel key={currentReview.id} canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} /></div></> : null}
       {getActiveTab() === 'workspace' && !missingReview && reviewMode === 'edit' ? (
         <div className="workspace-grid">
           <div>
@@ -264,7 +260,7 @@ export default function App() {
           </div>
           <div className="workspace-sidebar">
               <DecisionCard review={currentReview} verdict={verdict} />
-              <CommentsPanel canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} />
+              <CommentsPanel key={currentReview.id} canComment={isCurrentReviewSaved} comments={currentComments} onAddComment={handleAddComment} />
           </div>
         </div>
       ) : null}

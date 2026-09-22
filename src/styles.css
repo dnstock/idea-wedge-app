@@ -577,6 +577,17 @@ img, svg, video, canvas, audio, iframe, embed, object {
   background: #f3f4f6;
 }
 
+.button.text {
+  background: transparent;
+  color: var(--primary);
+  border: 0;
+  padding: 0;
+}
+
+.button.text:hover {
+  text-decoration: underline;
+}
+
 .vertical-divider {
   width: 1px;
   background: var(--border);
@@ -1617,6 +1628,8 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .reader-overview h2 { font-size: clamp(30px, 3.6vw, 48px); letter-spacing: -.035em; line-height: 1.12; margin: 20px 0; }
 .reader-summary { font-size: 21px; line-height: 1.65; white-space: pre-wrap; }
 .reader-meta { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; color: var(--muted); }
+.reader-meta .button { background: transparent; color: var(--muted); border: 0; padding: 0; font-weight: 400; }
+.reader-meta .button:hover { color: var(--primary); }
 .reader-tags { color: var(--muted); font-size: 13px; }
 .reader-verdict { display: flex; justify-content: space-between; gap: 24px; margin-top: 32px; padding: 24px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .reader-verdict span { display: block; color: var(--muted); font-size: 12px; }
@@ -1723,7 +1736,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .reader-section dl > div:nth-child(even) dt { background: var(--surface-alt); }
 .reader-sidebar { position: sticky; top: calc(var(--reader-sticky-top) + 24px); align-self: start; max-height: calc(100dvh - var(--reader-sticky-top) - 48px); }
 .reader-sidebar .reader-nav { position: static; }
-.reader-score-summary { border-top: 1px solid var(--border); margin-top: 20px; padding-top: 18px; }
+.reader-score-summary { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 18px; }
 .reader-score-total { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
 .reader-score-total > span { font-size: 13px; color: var(--muted); }
 .reader-score-total strong { font-size: 24px; }
@@ -1740,3 +1753,29 @@ img, svg, video, canvas, audio, iframe, embed, object {
   .reader-sidebar { display: none; }
   .reader-section-heading, .reader-section dt { position: static; box-shadow: none; }
 }
+
+/* Discussion stays within reach while reading or editing a long review. */
+.reader-comment-summary { border-top: 1px solid var(--border); margin-top: 20px; padding-top: 18px; }
+.reader-comment-summary .button { width: auto; font-size: 13px; font-weight: 600; }
+.reader-comment-summary .reader-comment-total { font-weight: 400; }
+.reader-comment-summary .reader-comment-total:hover { color: var(--primary); background: transparent; }
+.comments-shortcuts { position: sticky; top: 0; z-index: 6; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 12px #00000008; }
+.comments-shortcuts .button { width: auto; white-space: nowrap; }
+#comments-heading { scroll-margin-top: 88px; }
+#comment-draft { scroll-margin-block: 88px; min-height: 140px; }
+.review-reader:not(.is-presenting) .reader-section, .review-reader:not(.is-presenting) .reader-overview { scroll-margin-top: 88px; }
+.comment-format-help { margin: 0; font-size: 13px; color: var(--muted); margin-top: -6px; }
+.comment-preview { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface-alt); }
+.comment-body { white-space: normal; overflow-wrap: anywhere; line-height: 1.65; min-width: 0; }
+.comment-body > :first-child { margin-top: 0; }
+.comment-body > :last-child { margin-bottom: 0; }
+.comment-body p { white-space: pre-wrap; }
+.comment-body pre { overflow-x: auto; padding: 12px; background: var(--surface-alt); border-radius: 8px; }
+.comment-body code { font-size: .9em; background: var(--surface-alt); }
+.comment-body blockquote { margin-inline: 0; border-left: 3px solid var(--primary); padding-left: 16px; color: var(--muted); }
+.comment-body table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.comment-body th, .comment-body td { border: 1px solid var(--border); padding: 6px 10px; }
+.comment-body img { max-width: 100%; height: auto; }
+.comment-body input[type='checkbox'] { width: auto; }
+.comment-body h1, .comment-body h2, .comment-body h3 { font-size: 1.15em; }
+@media print { .comments-shortcuts { display: none !important; } }
