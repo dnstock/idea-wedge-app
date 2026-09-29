@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "idea-wedge",
+  "version": "0.1.0",
+  "description": "Submit ideas to Idea Wedge and assess saved ideas against its five playbook gates.",
+  "author": { "name": "Idea Wedge" },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Idea Wedge",
+        "shortDescription": "Submit and assess ideas",
+        "longDescription": "Create ideas in your existing Idea Wedge Supabase database and return evidence-grounded assessments using the app's scoring rules. Runs locally with a signed-in user's access token.",
+        "developerName": "Idea Wedge",
+        "category": "Productivity",
+        "capabilities": ["Interactive"],
+        "defaultPrompt": ["Submit a new idea to Idea Wedge.", "Assess a saved Idea Wedge idea."]
+      }
+    }
+  }
+}

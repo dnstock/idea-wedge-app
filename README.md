@@ -106,6 +106,14 @@ This version is structured to be ready to stand up, but a real multi-team rollou
 - richer reviewer attribution
 - notification workflows
 
+## Idea Wedge plugin
+
+The local MCP plugin provides `create_idea` and `assess_saved_idea` using the
+existing Supabase records and shared scoring rules. See
+[plugin setup and tool contracts](docs/idea-wedge-plugin.md). Build it with
+`npm run build:plugin` and verify with `npm run test:mcp`. A signed-in user
+access token is required for live database access; credentials are never bundled.
+
 ## Suggested next extensions
 
 - Notion sync for approved ideas

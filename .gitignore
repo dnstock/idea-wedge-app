@@ -15,3 +15,7 @@ skills-lock.json
 skills/
 
 migrate*
+
+# Generated local plugin runtime and distributable
+plugin/idea-wedge/server/
+artifacts/
