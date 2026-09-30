@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { OperatingRules } from './OperatingRules';
 import { SECTION_DEFINITIONS } from '../config';
 import { getOverallScore, getVerdict, scoreToLabel } from '../lib/scoring';
 import type { ReviewComment, ReviewRecord, ScoreValue } from '../types';
@@ -63,7 +64,7 @@ export function ReviewReader({ review, comments, presenting, onEdit, onPresent, 
 
   return <div ref={readerRef} className={`review-reader${presenting ? ' is-presenting' : ''}`}>
     <div className="reader-toolbar">
-      <button className="button ghost" onClick={presenting ? () => onPresent(false) : onBack}>{presenting ? '← Exit presentation' : '← Saved reviews'}</button>
+      <button className="button ghost" onClick={presenting ? () => onPresent(false) : onBack}>{presenting ? '← Exit presentation' : '← Submitted reviews'}</button>
       <div className="inline-actions">
         {!presenting && <>
           <button className="button ghost" onClick={() => void copyLink()}>Share</button>
@@ -106,6 +107,7 @@ export function ReviewReader({ review, comments, presenting, onEdit, onPresent, 
           return <div key={section.key}><dt>{({ market: 'Market', wedge: 'Wedge', mvp: 'MVP', distribution: 'Distribution', risk: 'Risk' } as Record<string, string>)[section.key]}</dt><dd className={`reader-confidence reader-confidence--${value}`}>{scoreToLabel[value]}</dd></div>;
         })}</dl>
       </section>
+      <OperatingRules key={review.id} className="reader-operating-rules" />
       </aside>
       <article className="reader-document">
         <header id="reader-overview" className="reader-overview">

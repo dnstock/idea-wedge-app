@@ -1,11 +1,10 @@
-import { usePersistentBoolean } from '../hooks/usePersistentBoolean';
+import { OperatingRules } from './OperatingRules';
 import { getOverallScore, scoreToLabel } from '../lib/scoring';
 import type { ReviewRecord, Verdict } from '../types';
 
 interface DecisionCardProps {
   review: ReviewRecord;
   verdict: Verdict;
-  defaultOpen?: boolean;
 }
 
 function verdictClass(tone: Verdict['tone']) {
@@ -14,12 +13,8 @@ function verdictClass(tone: Verdict['tone']) {
   return 'danger-surface';
 }
 
-export function DecisionCard({ review, verdict, defaultOpen = true }: DecisionCardProps) {
+export function DecisionCard({ review, verdict }: DecisionCardProps) {
   const liveOverallScore = getOverallScore(review);
-  const [isRulesOpen, setIsRulesOpen] = usePersistentBoolean(
-    'rule-block:operating-rules',
-    defaultOpen
-  );
 
   return (
     <>
@@ -46,23 +41,7 @@ export function DecisionCard({ review, verdict, defaultOpen = true }: DecisionCa
         ))}
       </div>
 
-      <div className="rule-block">
-        <details
-          open={isRulesOpen}
-          onToggle={(e) => setIsRulesOpen(e.currentTarget.open)}
-        >
-          <summary>
-            <h4>Operating rules</h4>
-          </summary>
-          <ul>
-            <li>Start where customers already spend money.</li>
-            <li>Win on a visible wedge, not novelty.</li>
-            <li>Keep the first version brutally small.</li>
-            <li>Name buyer, channel, &amp; message before approval.</li>
-            <li>Screen for platform and dependency risk early.</li>
-          </ul>
-        </details>
-      </div>
+      <OperatingRules key={review.id} />
     </section>
     </>
   );

@@ -699,7 +699,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
   font-size: 16px;
 }
 
-.rule-block details[open] summary::after,
+.rule-block details[open] > summary::after,
 .accordion-item[open] summary::after {
   transform: rotate(-90deg);
 }
@@ -1734,7 +1734,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .reader-section-heading { position: sticky; top: var(--reader-sticky-top); z-index: 3; border-radius: 13px 13px 0 0; }
 .reader-section dt { position: sticky; top: calc(var(--reader-sticky-top) + var(--reader-heading-height, 80px)); z-index: 2; background: var(--surface); padding: 10px 0; margin-top: -10px; }
 .reader-section dl > div:nth-child(even) dt { background: var(--surface-alt); }
-.reader-sidebar { position: sticky; top: calc(var(--reader-sticky-top) + 24px); align-self: start; max-height: calc(100dvh - var(--reader-sticky-top) - 48px); }
+.reader-sidebar { position: sticky; top: calc(var(--reader-sticky-top) + 24px); align-self: start; max-height: calc(100dvh - var(--reader-sticky-top) - 48px); overflow-y: auto; }
 .reader-sidebar .reader-nav { position: static; }
 .reader-score-summary { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 18px; }
 .reader-score-total { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
@@ -1779,3 +1779,21 @@ img, svg, video, canvas, audio, iframe, embed, object {
 .comment-body input[type='checkbox'] { width: auto; }
 .comment-body h1, .comment-body h2, .comment-body h3 { font-size: 1.15em; }
 @media print { .comments-shortcuts { display: none !important; } }
+
+/* Shared playbook rules in the decision card and reading sidebar. */
+.operating-rules-group { margin-top: 16px; }
+.operating-rules-group h5 { margin: 0; font-size: 1.1em; font-weight: 600; color: var(--text); }
+.operating-rules-group li + li { margin-top: 8px; }
+.operating-rules-group li strong { color: var(--text); font-weight: 600; }
+.reader-operating-rules { margin: 20px 0 0; padding: 18px 0 0; background: transparent; border-radius: 0; font-size: 13px; }
+.reader-operating-rules summary h4 { font-size: 14px; }
+.reader-operating-rules summary::after { font-size: 12px; }
+.reader-operating-rules ul { margin-bottom: 0; }
+
+/* Keep nested disclosures beside their labels and within the sidebar width. */
+.rule-block .operating-rules-group > summary { justify-content: flex-start; gap: 10px; }
+.rule-block .operating-rules-group > summary::after { content: ''; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); flex-shrink: 0; }
+.rule-block .operating-rules-group[open] > summary::after { transform: rotate(45deg); }
+.reader-sidebar { min-width: 0; max-width: 100%; overflow-x: hidden; }
+.reader-operating-rules, .reader-operating-rules details { min-width: 0; max-width: 100%; }
+.reader-operating-rules li { overflow-wrap: anywhere; }

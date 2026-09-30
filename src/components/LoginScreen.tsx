@@ -22,7 +22,7 @@ export function LoginScreen({ isConfigured, loading, onSignIn }: Props) {
 
         {isConfigured ? (
           <div className="info-banner">
-            Sign in to access saved reviews, team comments, comparisons, and the rest of the app.
+            Sign in to access idea submissions, team comments, comparisons, and the rest of the app.
           </div>
         ) : (
           <div className="error-banner" style={{ marginTop: '16px' }}>
